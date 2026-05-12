@@ -49,6 +49,7 @@ from vuer.events import (
   Set,
   Update,
   Upsert,
+  WebRTCAnswer,
 )
 from vuer.schemas import Page
 from vuer.types import EventHandler, SocketHandler, Url
@@ -296,6 +297,96 @@ def _match_filters(obj: dict, **filters) -> bool:
   return True
 
 
+async def _handle_webrtc_offer(event: ClientEvent, sess: "VuerSession") -> None:
+  """Built-in handler for ``WEBRTC_OFFER`` events. Runs the SDP exchange on
+  a per-session ``RTCPeerConnection`` and dispatches the inbound video
+  track to handlers registered via ``@sess.on_camera_stream(key)``.
+
+  The offer carries::
+
+      event.value = {
+          "cameraKey": "<virtual camera key>",
+          "sdp": "<browser's SDP offer>",
+          "type": "offer",
+      }
+      event.key = "<rpc uuid>"   # browser uses this to match the answer
+
+  The reply is a ``WebRTCAnswer`` with etype ``WEBRTC_ANSWER@<uuid>``,
+  carrying either ``{sdp, type}`` on success or ``{error}`` on failure.
+
+  Lifecycle: on pc connectionState transition to ``failed``/``closed``/
+  ``disconnected``, ``sess._cleanup_recv(camera_key)`` runs — removing the
+  pc from the session and cancelling any consumer tasks. ``sess.close_ws``
+  also runs ``_cleanup_all_recv`` so orphaned pcs are torn down on
+  network drops.
+  """
+  payload = event.value if isinstance(event.value, dict) else {}
+  camera_key = payload.get("cameraKey")
+  sdp_offer = payload.get("sdp")
+  sdp_type = payload.get("type", "offer")
+  rpc_uuid = event.key  # offer's correlation id
+
+  def _send_error(msg: str) -> None:
+    sess @ WebRTCAnswer(uuid=rpc_uuid, error=msg)
+
+  if not camera_key or not sdp_offer:
+    _send_error("missing cameraKey or sdp in WEBRTC_OFFER payload")
+    return
+
+  handlers = list(sess._camera_stream_handlers.get(camera_key, []))
+  if not handlers:
+    _send_error(
+      f"no @sess.on_camera_stream handler registered for {camera_key!r}"
+    )
+    return
+
+  if camera_key in sess._recv_pcs:
+    _send_error(
+      f"stream for {camera_key!r} is already active in this session"
+    )
+    return
+
+  try:
+    from vuer.webrtc import _require_aiortc
+
+    RTCPeerConnection, RTCSessionDescription, _, _, _ = _require_aiortc()
+  except ImportError as e:
+    _send_error(str(e))
+    return
+
+  pc = RTCPeerConnection()
+  sess._recv_pcs[camera_key] = pc
+
+  @pc.on("track")
+  def _on_track(track):  # noqa: ARG001
+    # Spawn one consumer task per registered handler. Tasks run independently;
+    # cancellation happens in _cleanup_recv when the pc closes.
+    for fn in handlers:
+      task = asyncio.create_task(fn(track))
+      sess._recv_tasks[camera_key].append(task)
+
+  @pc.on("connectionstatechange")
+  async def _on_connection_state():
+    if pc.connectionState in ("failed", "closed", "disconnected"):
+      await sess._cleanup_recv(camera_key)
+
+  try:
+    offer = RTCSessionDescription(sdp=sdp_offer, type=sdp_type)
+    await pc.setRemoteDescription(offer)
+    answer = await pc.createAnswer()
+    await pc.setLocalDescription(answer)
+  except Exception as e:
+    await sess._cleanup_recv(camera_key)
+    _send_error(f"webrtc negotiation failed: {e}")
+    return
+
+  sess @ WebRTCAnswer(
+    uuid=rpc_uuid,
+    sdp=pc.localDescription.sdp,
+    type=pc.localDescription.type,
+  )
+
+
 class VuerSession(SceneOps):
   def __init__(self, vuer: "Vuer", ws_id: int, queue_len=100):
     self.vuer = vuer
@@ -305,6 +396,13 @@ class VuerSession(SceneOps):
 
     self.downlink_queue: Deque[ClientEvent] = que_maker()
     self.uplink_queue: Deque[ServerEvent] = que_maker()
+
+    # WebRTC video stream receivers — one entry per active <PerspectiveCamera
+    # stream={true} _key="..."> in this session. Strictly per-client: closing
+    # this session never affects other clients' pcs.
+    self._camera_stream_handlers: Dict[str, List[Callable]] = defaultdict(list)
+    self._recv_pcs: Dict[str, object] = {}                # camera_key -> aiortc RTCPeerConnection
+    self._recv_tasks: Dict[str, List[asyncio.Task]] = defaultdict(list)
 
   @property
   def socket(self):
@@ -355,6 +453,57 @@ class VuerSession(SceneOps):
 
     event = GrabRender(**kwargs)
 
+    return await self.vuer.rpc(self.CURRENT_WS_ID, event, ttl=ttl)
+
+  async def capture_image(
+    self,
+    key: str,
+    *,
+    height: int = 1080,
+    format: str = "png",
+    quality: float = 0.92,
+    ttl: float = 5.0,
+  ) -> ClientEvent:
+    """Capture a snapshot of a virtual camera in the browser scene.
+
+    Counterpart to ``grab_render`` but addresses a specific virtual camera
+    by its ``_key`` rather than the editor's main view. The browser
+    re-renders that camera at the requested ``height`` (width derived from
+    camera aspect) and returns the encoded image bytes.
+
+    Usage::
+
+        @app.spawn(start=True)
+        async def main(sess: VuerSession):
+            sess.set @ Scene(children=[
+                PerspectiveCamera(key='cam-front', position=[3, 2, 5]),
+            ])
+            await asyncio.sleep(0.5)  # let the browser mount the camera
+
+            rsp = await sess.capture_image('cam-front', height=720, format='jpeg')
+            with open('/tmp/snap.jpg', 'wb') as f:
+                f.write(rsp.value['frame'])
+
+    On success, ``rsp.value`` carries ``cameraKey, width, height, format,
+    frame`` (frame is bytes — PNG or JPEG depending on ``format``). On
+    client-side failure (camera not registered, capture-in-flight, etc.)
+    ``rsp.value`` carries ``cameraKey, error`` instead of ``frame``.
+
+    :param key: The virtual-camera ``_key`` to capture from.
+    :param height: Output height in pixels; width derived from camera aspect.
+    :param format: ``"png"`` (lossless) or ``"jpeg"`` (smaller).
+    :param quality: JPEG quality 0..1, ignored for PNG.
+    :param ttl: Timeout in seconds. Raises ``asyncio.TimeoutError`` if the
+        browser doesn't respond within this window.
+    :return: ClientEvent whose ``.value`` is the response payload above.
+    """
+    assert self.CURRENT_WS_ID is not None, (
+      "Websocket session is missing. CURRENT_WS_ID is None."
+    )
+
+    from vuer.events import CaptureImage
+
+    event = CaptureImage(key=key, height=height, format=format, quality=quality)
     return await self.vuer.rpc(self.CURRENT_WS_ID, event, ttl=ttl)
 
   async def get_webxr_mesh(self, key: str = "webxr-mesh", ttl=2.0) -> ClientEvent:
@@ -413,6 +562,91 @@ class VuerSession(SceneOps):
     event = GetWebXRMesh(key=key)
 
     return await self.vuer.rpc(self.CURRENT_WS_ID, event, ttl=ttl)
+
+  def on_camera_stream(
+    self,
+    key: str,
+    fn: Callable = None,
+  ) -> Callable[[], None]:
+    """Subscribe to the incoming WebRTC video track from this client's
+    ``<PerspectiveCamera _key=key stream={true} />``.
+
+    The handler receives ``(track,)`` — an aiortc ``MediaStreamTrack``. The
+    session is implicit via closure over ``@app.spawn``'s ``sess`` parameter.
+    Multiple handlers can be registered for the same key; each runs as its
+    own ``asyncio.create_task``.
+
+    The track raises ``MediaStreamError`` when the browser closes the sender
+    (e.g. ``stream={false}`` or component unmount). User code typically
+    wraps ``await track.recv()`` in a try/except and writes a trailer in
+    ``finally``.
+
+    As a decorator (most common)::
+
+        @app.spawn(start=True)
+        async def main(sess: VuerSession):
+            sess.set @ Scene(children=[
+                PerspectiveCamera(key='cam-front', stream=True),
+            ])
+
+            @sess.on_camera_stream('cam-front')
+            async def record(track):
+                while True:
+                    frame = await track.recv()  # av.VideoFrame
+                    ...
+
+    Imperative form returns a cleanup callable for early unregistration::
+
+        cleanup = sess.on_camera_stream('cam-front', my_handler)
+        # later:
+        cleanup()
+
+    :param key: The virtual-camera key matching ``<PerspectiveCamera _key=...>``.
+    :param fn: The handler function. When ``None`` (default), the call
+        returns a decorator instead of registering.
+    :return: A cleanup callable when used imperatively, else a decorator.
+    """
+    if fn is None:
+      return lambda handler: self.on_camera_stream(key, handler)
+
+    self._camera_stream_handlers[key].append(fn)
+
+    def cleanup():
+      try:
+        self._camera_stream_handlers[key].remove(fn)
+      except ValueError:
+        pass
+
+    return cleanup
+
+  async def _cleanup_recv(self, camera_key: str) -> None:
+    """Tear down a single recv pc + its consumer tasks for this session.
+    Called on pc state transitions to closed/failed/disconnected, OR by
+    ``_cleanup_all_recv`` on session-end. Safe to call multiple times.
+    """
+    pc = self._recv_pcs.pop(camera_key, None)
+    tasks = self._recv_tasks.pop(camera_key, [])
+
+    for task in tasks:
+      if not task.done():
+        task.cancel()
+
+    if pc is not None:
+      try:
+        await pc.close()
+      except Exception as e:
+        print(f"[VuerSession] error closing recv pc for {camera_key!r}: {e}")
+
+  async def _cleanup_all_recv(self) -> None:
+    """Tear down every recv pc + task for this session. Called by
+    ``Vuer.close_ws`` when the websocket disconnects (browser-initiated or
+    network drop). Other sessions are untouched.
+    """
+    keys = list(self._recv_pcs.keys()) + [
+      k for k in self._recv_tasks.keys() if k not in self._recv_pcs
+    ]
+    for camera_key in keys:
+      await self._cleanup_recv(camera_key)
 
   def send(self, event: ServerEvent) -> None:
     """
@@ -701,10 +935,19 @@ class Vuer(Server):
     self.handlers = defaultdict(dict)
     self.page = Page()
     self.ws: Dict[str, WebSocketResponse] = {}
+    # Per-ws_id session registry. Mirrors `self.ws` but holds the VuerSession
+    # so `close_ws` can run session-scoped cleanup (e.g. WebRTC recv pcs).
+    self.sessions: Dict[str, VuerSession] = {}
     # List of spawn handlers with their filters: [{"fn": handler, "filters": {...}}, ...]
     self.spawn_handlers: List[Dict] = []
     self.spawned_coroutines = []
     self._webrtc_manager = None
+
+    # Built-in handler: accepts WEBRTC_OFFER from the browser and runs the
+    # SDP exchange over the existing WebSocket. Lets <PerspectiveCamera
+    # stream={true}/> open a sendonly pc to whoever registered
+    # @sess.on_camera_stream(key).
+    self.add_handler("WEBRTC_OFFER", _handle_webrtc_offer)
 
   @property
   def ssl(self) -> str:
@@ -1085,6 +1328,17 @@ class Vuer(Server):
     raise NotImplementedError("This is not implemented yet.")
 
   async def close_ws(self, ws_id):
+    # Tear down per-session WebRTC recv pcs + their consumer tasks BEFORE
+    # cancelling spawned tasks, so the user's @sess.on_camera_stream
+    # handlers see MediaStreamError naturally on track.recv() and can run
+    # their try/finally trailers (mp4 moov, etc.) before being cancelled.
+    sess = self.sessions.pop(ws_id, None)
+    if sess is not None:
+      try:
+        await sess._cleanup_all_recv()
+      except Exception as e:
+        print(f"[Vuer] error during recv cleanup for ws {ws_id}: {e}")
+
     # Cancel any spawned tasks associated with this websocket
     self._cancel_tasks(ws_id)
     # uplink is moved to the proxy object. Cleaned by garbage collection.
@@ -1140,6 +1394,7 @@ class Vuer(Server):
 
     print(f"websocket is connected. id:{ws_id}")
     vuer_proxy = self._proxy(ws_id)
+    self.sessions[ws_id] = vuer_proxy
 
     generator = self.bound_fn(vuer_proxy)
 

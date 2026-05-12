@@ -347,6 +347,40 @@ class ServerRPC(ServerEvent):
     super().__init__(data, **kwargs)
 
 
+class WebRTCAnswer(ServerEvent):
+  """Server's reply to a browser-originated ``WEBRTC_OFFER``. The etype is
+  rewritten per-instance to ``WEBRTC_ANSWER@<uuid>`` so it correlates with
+  the specific offer (matches the offer's ``rtype`` field). Used by the
+  built-in WEBRTC_OFFER handler — user code typically does not construct
+  this directly.
+
+  On success: ``sdp`` + ``type`` carry the SDP answer. On failure: ``error``
+  carries a short diagnostic. The browser distinguishes by checking
+  ``data.error``.
+  """
+
+  etype = "WEBRTC_ANSWER"
+
+  def __init__(
+    self,
+    *,
+    uuid: str,
+    sdp: str = None,
+    type: str = None,
+    error: str = None,
+    **kwargs,
+  ):
+    data: dict = {}
+    if error is not None:
+      data["error"] = error
+    else:
+      data["sdp"] = sdp
+      data["type"] = type
+    super().__init__(data=data, **kwargs)
+    # Instance-level override so each answer correlates to its specific offer.
+    self.__dict__["etype"] = f"WEBRTC_ANSWER@{uuid}"
+
+
 class GrabRender(ServerRPC):
   """
   A higher-level ServerEvent that wraps other ServerEvents
@@ -358,6 +392,59 @@ class GrabRender(ServerRPC):
     super().__init__(data=kwargs)
     self.key = key
     self.rtype = f"GRAB_RENDER_RESPONSE@{self.uuid}"
+
+
+class CaptureImage(ServerRPC):
+  """Request a one-shot snapshot from a virtual camera by its scene key.
+
+  Counterpart to GrabRender, but addresses a specific virtual camera in the
+  scene (``<PerspectiveCamera _key="...">``) rather than the editor's main
+  view. The browser renders that camera at the requested ``height`` (width
+  derived from camera aspect) and returns the encoded image bytes.
+
+  The browser responds with ``CAPTURE_IMAGE_RESPONSE@<uuid>`` carrying::
+
+      event.value = {
+          "cameraKey": "<key>",
+          "width": int,
+          "height": int,
+          "format": "png" | "jpeg",
+          "frame": <bytes>,        # raw encoded image bytes
+      }
+
+  On client-side failure (camera not registered, capture in flight, etc.)
+  the response carries ``{"cameraKey": "<key>", "error": "<message>"}``
+  instead of the frame, so the python ``await`` always resolves rather
+  than timing out.
+
+  :param key: The virtual-camera ``_key`` to capture from.
+  :param height: Output height in pixels; width derived from camera aspect.
+                 Default 1080.
+  :param format: ``"png"`` (lossless) or ``"jpeg"`` (smaller, default 'png').
+  :param quality: JPEG quality 0-1, ignored for PNG. Default 0.92.
+  """
+
+  etype = "CAPTURE_IMAGE"
+
+  def __init__(
+    self,
+    *,
+    key: str,
+    height: int = 1080,
+    format: str = "png",
+    quality: float = 0.92,
+    **kwargs,
+  ):
+    super().__init__(
+      data={
+        "height": height,
+        "format": format,
+        "quality": quality,
+        **kwargs,
+      },
+    )
+    self.key = key
+    self.rtype = f"CAPTURE_IMAGE_RESPONSE@{self.uuid}"
 
 
 class MjStep(ServerRPC):
