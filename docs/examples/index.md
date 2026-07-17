@@ -34,3 +34,11 @@ Depth Texture <visualization/depth_texture.md>
 background_environment.md
 pointer.md
 ```
+
+## Applications
+
+```{toctree}
+:maxdepth: 1
+
+Closed-Loop VLA Rollout <inference_loop/rollout.md>
+```
