@@ -22,13 +22,14 @@ function resolveLink(href,rel){
  if(p.startsWith('/'))return p.replace(/\.html$/,'')+(hash?'#'+hash:'')
  let target=path.posix.normalize(path.posix.join(path.posix.dirname(rel),p))
  const fixes={'gaussian_splatting/openai_sora.md':'examples/openai_sora.md','gaussian_splatting/09_gaussian_splats.md':'components/splat.md','gaussian_splatting/10_gaussian_splats_vr.md':'components/splat.md','examples/23_spark.md':'components/spark_splats.md','tutorials/robotics.md':'tutorials/teleoperation.md','guides/animation/':'guides/session_apis.md','guides/events/':'guides/session_apis.md','guides/vr/':'examples/vr_xr/hand_tracking.md','../components/primitives':'components/category_primitives.md','guides/first_3d_scene/03_materials_and_textures':'guides/first_3d_scene/02_materials_and_textures.md','examples/background/background_image.md':'examples/background_environment.md'}
- target=fixes[target]||target
+ if(!fs.existsSync(path.join(source,target))&&fixes[target]&&fs.existsSync(path.join(source,fixes[target])))target=fixes[target]
  if(!fs.existsSync(path.join(source,target))&&fs.existsSync(path.join(source,target.replace(/\.md$/,'.rst'))))target=target.replace(/\.md$/,'.rst')
  if(!fs.existsSync(path.join(source,target))){const found=files.filter(f=>path.basename(f)===path.basename(target));if(found.length===1)target=path.relative(source,found[0])}
  return (/\.(md|rst)$/.test(target)||p.endsWith('.html')?url(target.replace(/\.html$/,'.md')):'/source/'+target)+(hash?'#'+hash:'')
 }
 function apiUrl(name){
- const parts=name.replace(/^vuer\.?/,'').split('.').filter(Boolean), base=fs.existsSync(path.join(root,'src/vuer'))?path.join(root,'src/vuer'):path.join(root,'vuer');
+ const packagePath=['src/vuer','vuer','tassa','nerf_vuer'].find(p=>fs.existsSync(path.join(root,p,'__init__.py'))) || 'vuer';
+ const moduleName=path.basename(packagePath), parts=(name===moduleName?'':name.startsWith(moduleName+'.')?name.slice(moduleName.length+1):name).split('.').filter(Boolean), base=path.join(root,packagePath);
  for(let n=parts.length;n>=0;n--){const module=parts.slice(0,n).join('/');if(fs.existsSync(path.join(base,module+'.py'))||fs.existsSync(path.join(base,module,'__init__.py'))){return '/python-api'+(module?'/'+module:'')+(n<parts.length?'#'+parts.slice(n).join('-').toLowerCase():'')}}
  return '/python-api'
 }
