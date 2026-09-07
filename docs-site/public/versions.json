@@ -1,0 +1,606 @@
+{
+  "current": "0.0.31rc7",
+  "stable": "0.1.6",
+  "aliases": {
+    "latest": "https://docs.vuer.ai",
+    "stable": "https://docs.vuer.ai"
+  },
+  "versions": [
+    {
+      "version": "lastest",
+      "url": "https://docs-lastest--vuer-docs.netlify.app"
+    },
+    {
+      "version": "latest",
+      "url": "https://docs-latest--vuer-docs.netlify.app"
+    },
+    {
+      "version": "stable",
+      "url": "https://docs-stable--vuer-docs.netlify.app"
+    },
+    {
+      "version": "v",
+      "url": "https://docs-v--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.0",
+      "url": "https://docs-v0-0-0--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.1",
+      "url": "https://docs-v0-0-1--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.10",
+      "url": "https://docs-v0-0-10--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.11",
+      "url": "https://docs-v0-0-11--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.12",
+      "url": "https://docs-v0-0-12--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.13-rc1",
+      "url": "https://docs-v0-0-13-rc1--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.13-rc2",
+      "url": "https://docs-v0-0-13-rc2--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.13-rc3",
+      "url": "https://docs-v0-0-13-rc3--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.14",
+      "url": "https://docs-v0-0-14--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.15-rc1",
+      "url": "https://docs-v0-0-15-rc1--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.15-rc2",
+      "url": "https://docs-v0-0-15-rc2--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.15-rc3",
+      "url": "https://docs-v0-0-15-rc3--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.16",
+      "url": "https://docs-v0-0-16--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.17",
+      "url": "https://docs-v0-0-17--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.18",
+      "url": "https://docs-v0-0-18--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.19",
+      "url": "https://docs-v0-0-19--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.22",
+      "url": "https://docs-v0-0-22--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.22b",
+      "url": "https://docs-v0-0-22b--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.23",
+      "url": "https://docs-v0-0-23--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.24",
+      "url": "https://docs-v0-0-24--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.25",
+      "url": "https://docs-v0-0-25--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.26-rc1",
+      "url": "https://docs-v0-0-26-rc1--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.26-rc3",
+      "url": "https://docs-v0-0-26-rc3--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.26-rc4",
+      "url": "https://docs-v0-0-26-rc4--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.26rc1",
+      "url": "https://docs-v0-0-26rc1--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.27",
+      "url": "https://docs-v0-0-27--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.28",
+      "url": "https://docs-v0-0-28--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.29-rc1",
+      "url": "https://docs-v0-0-29-rc1--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.29-rc11",
+      "url": "https://docs-v0-0-29-rc11--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.29-rc2",
+      "url": "https://docs-v0-0-29-rc2--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.29-rc3",
+      "url": "https://docs-v0-0-29-rc3--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.29-rc4",
+      "url": "https://docs-v0-0-29-rc4--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.29-rc5",
+      "url": "https://docs-v0-0-29-rc5--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.29-rc6",
+      "url": "https://docs-v0-0-29-rc6--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.29-rc7",
+      "url": "https://docs-v0-0-29-rc7--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.29-rc8",
+      "url": "https://docs-v0-0-29-rc8--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.29-rc9",
+      "url": "https://docs-v0-0-29-rc9--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.3",
+      "url": "https://docs-v0-0-3--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.30",
+      "url": "https://docs-v0-0-30--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.31-rc4",
+      "url": "https://docs-v0-0-31-rc4--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.31-rc5",
+      "url": "https://docs-v0-0-31-rc5--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.31rc1",
+      "url": "https://docs-v0-0-31rc1--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.31rc2",
+      "url": "https://docs-v0-0-31rc2--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.31rc3",
+      "url": "https://docs-v0-0-31rc3--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.31rc4",
+      "url": "https://docs-v0-0-31rc4--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.31rc6",
+      "url": "https://docs-v0-0-31rc6--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.31rc7",
+      "url": "https://docs-v0-0-31rc7--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.31rc8",
+      "url": "https://docs-v0-0-31rc8--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.32",
+      "url": "https://docs-v0-0-32--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.32-rc24",
+      "url": "https://docs-v0-0-32-rc24--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.32-rc27",
+      "url": "https://docs-v0-0-32-rc27--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.32-rc28",
+      "url": "https://docs-v0-0-32-rc28--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.32-rc29",
+      "url": "https://docs-v0-0-32-rc29--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.32-rc30",
+      "url": "https://docs-v0-0-32-rc30--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.32-rc31",
+      "url": "https://docs-v0-0-32-rc31--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.32-rc5",
+      "url": "https://docs-v0-0-32-rc5--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.32-rc7",
+      "url": "https://docs-v0-0-32-rc7--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.32-rc8",
+      "url": "https://docs-v0-0-32-rc8--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.33",
+      "url": "https://docs-v0-0-33--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.33b",
+      "url": "https://docs-v0-0-33b--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.34",
+      "url": "https://docs-v0-0-34--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.34-rc2",
+      "url": "https://docs-v0-0-34-rc2--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.34-rc3",
+      "url": "https://docs-v0-0-34-rc3--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.34-rc5",
+      "url": "https://docs-v0-0-34-rc5--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.34-rc6",
+      "url": "https://docs-v0-0-34-rc6--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.34-rc7",
+      "url": "https://docs-v0-0-34-rc7--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.35",
+      "url": "https://docs-v0-0-35--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.35-rc16",
+      "url": "https://docs-v0-0-35-rc16--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.35-rc17",
+      "url": "https://docs-v0-0-35-rc17--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.35-rc18",
+      "url": "https://docs-v0-0-35-rc18--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.35-rc3",
+      "url": "https://docs-v0-0-35-rc3--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.35-rc4",
+      "url": "https://docs-v0-0-35-rc4--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.35-rc6",
+      "url": "https://docs-v0-0-35-rc6--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.35-rc8",
+      "url": "https://docs-v0-0-35-rc8--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.36-rc1",
+      "url": "https://docs-v0-0-36-rc1--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.36-rc2",
+      "url": "https://docs-v0-0-36-rc2--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.36-rc3",
+      "url": "https://docs-v0-0-36-rc3--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.36-rc5",
+      "url": "https://docs-v0-0-36-rc5--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.36-rc8",
+      "url": "https://docs-v0-0-36-rc8--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.36-rc9",
+      "url": "https://docs-v0-0-36-rc9--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.37",
+      "url": "https://docs-v0-0-37--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.38",
+      "url": "https://docs-v0-0-38--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.39",
+      "url": "https://docs-v0-0-39--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.4",
+      "url": "https://docs-v0-0-4--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.40",
+      "url": "https://docs-v0-0-40--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.41",
+      "url": "https://docs-v0-0-41--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.42",
+      "url": "https://docs-v0-0-42--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.42-rc1",
+      "url": "https://docs-v0-0-42-rc1--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.42-rc10",
+      "url": "https://docs-v0-0-42-rc10--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.42-rc11",
+      "url": "https://docs-v0-0-42-rc11--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.42-rc13",
+      "url": "https://docs-v0-0-42-rc13--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.42-rc14",
+      "url": "https://docs-v0-0-42-rc14--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.42-rc15",
+      "url": "https://docs-v0-0-42-rc15--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.42-rc16",
+      "url": "https://docs-v0-0-42-rc16--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.42-rc2",
+      "url": "https://docs-v0-0-42-rc2--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.42-rc3",
+      "url": "https://docs-v0-0-42-rc3--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.42-rc4",
+      "url": "https://docs-v0-0-42-rc4--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.42-rc5",
+      "url": "https://docs-v0-0-42-rc5--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.42-rc6",
+      "url": "https://docs-v0-0-42-rc6--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.42-rc7",
+      "url": "https://docs-v0-0-42-rc7--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.42-rc8",
+      "url": "https://docs-v0-0-42-rc8--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.42-rc9",
+      "url": "https://docs-v0-0-42-rc9--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.43",
+      "url": "https://docs-v0-0-43--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.44",
+      "url": "https://docs-v0-0-44--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.45",
+      "url": "https://docs-v0-0-45--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.46",
+      "url": "https://docs-v0-0-46--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.47",
+      "url": "https://docs-v0-0-47--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.48",
+      "url": "https://docs-v0-0-48--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.49",
+      "url": "https://docs-v0-0-49--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.50",
+      "url": "https://docs-v0-0-50--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.51",
+      "url": "https://docs-v0-0-51--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.52",
+      "url": "https://docs-v0-0-52--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.54",
+      "url": "https://docs-v0-0-54--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.56",
+      "url": "https://docs-v0-0-56--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.57",
+      "url": "https://docs-v0-0-57--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.58",
+      "url": "https://docs-v0-0-58--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.59",
+      "url": "https://docs-v0-0-59--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.6",
+      "url": "https://docs-v0-0-6--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.61",
+      "url": "https://docs-v0-0-61--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.62",
+      "url": "https://docs-v0-0-62--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.67",
+      "url": "https://docs-v0-0-67--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.7-rc1",
+      "url": "https://docs-v0-0-7-rc1--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.7-rc2",
+      "url": "https://docs-v0-0-7-rc2--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.7-rc3",
+      "url": "https://docs-v0-0-7-rc3--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.70",
+      "url": "https://docs-v0-0-70--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.71",
+      "url": "https://docs-v0-0-71--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.72",
+      "url": "https://docs-v0-0-72--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.74",
+      "url": "https://docs-v0-0-74--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.75",
+      "url": "https://docs-v0-0-75--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.78",
+      "url": "https://docs-v0-0-78--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.79",
+      "url": "https://docs-v0-0-79--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.8",
+      "url": "https://docs-v0-0-8--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.80",
+      "url": "https://docs-v0-0-80--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.80rc1",
+      "url": "https://docs-v0-0-80rc1--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.80rc2",
+      "url": "https://docs-v0-0-80rc2--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.80rc5",
+      "url": "https://docs-v0-0-80rc5--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.80rc6",
+      "url": "https://docs-v0-0-80rc6--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.81",
+      "url": "https://docs-v0-0-81--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.0.9",
+      "url": "https://docs-v0-0-9--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.1.1",
+      "url": "https://docs-v0-1-1--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.1.2",
+      "url": "https://docs-v0-1-2--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.1.3",
+      "url": "https://docs-v0-1-3--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.1.4",
+      "url": "https://docs-v0-1-4--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.1.5",
+      "url": "https://docs-v0-1-5--vuer-docs.netlify.app"
+    },
+    {
+      "version": "0.1.6",
+      "url": "https://docs-v0-1-6--vuer-docs.netlify.app"
+    }
+  ]
+}
