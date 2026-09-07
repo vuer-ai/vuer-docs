@@ -9,7 +9,9 @@ const walk=d=>fs.readdirSync(d,{withFileTypes:true}).flatMap(e=>e.isDirectory()&
 const files=source===root?[path.join(root,'README.md'),...(fs.existsSync(path.join(root,'figures'))?walk(path.join(root,'figures')):[])]:walk(source), pages=files.filter(f=>/\.(md|rst)$/.test(f)&&!path.basename(f).startsWith('.')&&!f.includes('/assets/')&&!f.includes('/_static/'))
 const manifest=JSON.parse(fs.readFileSync(path.join(pub,'versions.json'),'utf8'))
 fs.rmSync(path.join(pub,'source'),{recursive:true,force:true})
-const version=(process.env.BRANCH||'').replace(/^docs\/v?/,'') || manifest.current
+const releaseBranch=(process.env.BRANCH||'').match(/^docs\/v?(\d[^/]*)$/)
+const sourceVersion=fs.existsSync(path.join(root,'pyproject.toml'))?fs.readFileSync(path.join(root,'pyproject.toml'),'utf8').match(/^version\s*=\s*["']([^"']+)/m)?.[1]:null
+const version=releaseBranch?.[1] || sourceVersion || manifest.current
 fs.rmSync(out,{recursive:true,force:true}); fs.mkdirSync(out,{recursive:true})
 function url(rel){return '/'+rel.replace(/\.(md|rst)$/,'').replace(/(^|\/)index$/,'').replace(/\/$/,'')}
 function resolveLink(href,rel){
