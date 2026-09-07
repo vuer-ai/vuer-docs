@@ -1,0 +1,9 @@
+{
+  "version": "v0.0.42-rc16",
+  "sourceRepository": "https://github.com/vuer-ai/vuer",
+  "sourceSha": "d37d321b1d01167efd822211453e10ae6d26094a",
+  "sourceArchiveBranch": "archive/v0.0.42-rc16",
+  "toolingCommit": "74ab063d878af01cd7c5173447554a80a606197e",
+  "legacyUrl": "https://vuer-py.readthedocs.io/en/v0.0.42-rc16/",
+  "priorRenderedBuild": true
+}
