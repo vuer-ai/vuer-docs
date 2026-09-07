@@ -57,6 +57,7 @@ for(const f of pages){
  })
  text=text.replace(/<!--([\s\S]*?)-->/g,'').replace(/^\[\/\/\]:.*$/gm,'')
  const title=(rel==='index.md'?'Vuer':text.match(/^#\s+(.+)$/m)?.[1]||path.basename(rel,'.md').replaceAll('_',' ')).replace(/<[^>]*>/g,' ').replaceAll('`','').trim()
+ if(source===root){const release=(process.env.BRANCH||'').replace(/^docs\//,'');const versions=JSON.parse(fs.readFileSync(path.join(site,'source-versions.json'),'utf8'));const commit=versions[release];const sourceUrl=commit?'https://github.com/vuer-ai/vuer/commit/'+commit:'https://github.com/vuer-ai/vuer-docs/tree/'+(process.env.BRANCH||'main');text='> **Historical source snapshot**\n> Dedicated documentation did not exist in this release. The original repository README appears below. The [package API](/python-api) is generated from this snapshot’s code. [View the original source commit]('+sourceUrl+').\n\n'+text}
  const section=rel==='index.md'||rel==='quick_start.md'?'Getting Started':({'guides':'Guides','tutorials':'Tutorials','components':'Components','examples':'Examples','api':'Python API','rtc':'Python API'}[rel.split('/')[0]]||'Reference')
  let html=md.render(text).replace(/\b(href|src)="([^"]+)"/g,(_,attr,h)=>`${attr}="${resolveLink(h,rel)}"`)
  html=html.replace(/<h([1-6])>(.*?)<\/h\1>/g,(_,level,content)=>`<h${level} id="${content.replace(/<[^>]+>/g,'').toLowerCase().replace(/[^\w\s-]/g,'').trim().replace(/\s+/g,'-')}">${content}</h${level}>`)

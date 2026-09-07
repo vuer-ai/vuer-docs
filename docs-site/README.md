@@ -28,3 +28,5 @@ Existing `/en/latest/<page>.html` and `/en/stable/<page>.html` links redirect to
 Netlify production tracks `main`; documentation branch deploys use the same checked-in build configuration. Publish only after the build, local link audit and browser inspection pass. Keep `public/versions.json` URLs synchronized with verified branch deployments. Preserve prior deploys and source refs; never force-push `archive/*` or replace an already published release snapshot.
 
 The converter writes generated MDX and Markdown downloads during each build. Do not commit those generated files. Vike must be able to discover generated `pages/`, so it is intentionally not listed in `.gitignore`.
+
+The pinned Dockit compatibility script (`scripts/patch-dockit.mjs`) preserves the supplied branch version after manifest hydration and separates the version selector from the home anchor. It is idempotent, validates the exact expected upstream structure, and fails loudly if a future framework release changes it. Regression checks run at installation and before every build.
