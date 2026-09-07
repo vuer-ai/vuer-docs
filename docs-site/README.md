@@ -23,10 +23,26 @@ Source branches: https://github.com/vuer-ai/vuer-docs/branches
 
 Preserved rendered builds: https://vuer-docs-archive.netlify.app (archive capture status is maintained separately; the original ReadTheDocs origin remains the fallback).
 
-Existing `/en/latest/<page>.html` and `/en/stable/<page>.html` links redirect to their migrated routes. Other `/en/*` requests proxy to https://vuer-py.readthedocs.io/en/ so old release links remain available while rendered snapshots are captured.
+Existing `/en/latest/<page>.html` and `/en/stable/<page>.html` links redirect to their migrated routes. Historical `/en/<tag>/*` links redirect through the corresponding immutable snapshot’s own route map. Unknown legacy paths redirect directly to https://vuer-py.readthedocs.io/en/ so the original host remains independently accessible.
 
 Netlify production tracks `main`; documentation branch deploys use the same checked-in build configuration. Publish only after the build, local link audit and browser inspection pass. Keep `public/versions.json` URLs synchronized with verified branch deployments. Preserve prior deploys and source refs; never force-push `archive/*` or replace an already published release snapshot.
 
 The converter writes generated MDX and Markdown downloads during each build. Do not commit those generated files. Vike must be able to discover generated `pages/`, so it is intentionally not listed in `.gitignore`.
 
 The pinned Dockit compatibility script (`scripts/patch-dockit.mjs`) preserves the supplied branch version after manifest hydration and separates the version selector from the home anchor. It is idempotent, validates the exact expected upstream structure, and fails loudly if a future framework release changes it. Regression checks run at installation and before every build.
+
+## Immutable historical builds
+
+The initial migration builds all 149 `docs/<tag>` branches at recorded commits and publishes each output as an immutable Netlify deployment. The version catalog records its branch, documentation commit, upstream commit and immutable URL. Each snapshot exposes `/build-provenance.json` with those source references, the Dockit version and the pinned autodoc commit. Git-based branch deployment remains enabled for future work; a branch alias can change, while the catalog's immutable deployment URLs preserve the reviewed builds.
+
+The preservation release includes `verified-version-deployments.json` and the migration publisher scripts. Retain those deployment IDs and source branches. Publish a new snapshot and deliberately update the catalog when correcting a historical release; never silently replace the existing artifact. The original Read the Docs origin remains available separately. Its downloadable offline capture is explicitly partial (270 files across 73 versions).
+
+## Hosting and rollback
+
+The Netlify site is `vuer-docs` (`67b4e1fc-ebed-4f93-8c1a-8491bddc7bd5`), with `docs.vuer.ai` as the production domain. The separate `vuer-docs-archive` site serves the original rendered capture and falls back to `vuer-py.readthedocs.io` for uncaptured pages. Keep the Read the Docs project and its custom-domain entry intact. Its Canonical setting was disabled so the default Read the Docs hostname works independently.
+
+To roll back the domain, restore only the `docs.vuer.ai` DNS record to `CNAME readthedocs.io` (previous TTL 3600), then optionally re-enable Canonical on Read the Docs domain entry 15530. Leave all other zone records unchanged. Production can also roll back to a prior Netlify deployment without changing the preserved version snapshots.
+
+Reserve the `snapshot-*` deployment branches for preservation and do not publish newer builds to those names. Netlify exempts the latest successful deploy of each branch from automatic deletion; an older replaced deploy can expire. Corrections therefore need a new snapshot branch name (for example, include the new commit ID), followed by an explicit catalog update. See [Netlify's retention rules](https://docs.netlify.com/deploy/manage-deploys/manage-deploys-overview/#automatic-deploy-deletion).
+
+The initial historical snapshots include a documented deployment overlay for extensionless page links: a nonforced `/source/*` fallback redirects missing source paths to the corresponding page route, while existing source assets retain precedence. The overlay copies all content hashes unchanged and updates only routing and provenance. The current converter resolves extensionless Markdown/RST links directly.

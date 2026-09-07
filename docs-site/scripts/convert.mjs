@@ -23,6 +23,7 @@ function resolveLink(href,rel){
  let target=path.posix.normalize(path.posix.join(path.posix.dirname(rel),p))
  const fixes={'gaussian_splatting/openai_sora.md':'examples/openai_sora.md','gaussian_splatting/09_gaussian_splats.md':'components/splat.md','gaussian_splatting/10_gaussian_splats_vr.md':'components/splat.md','examples/23_spark.md':'components/spark_splats.md','tutorials/robotics.md':'tutorials/teleoperation.md','guides/animation/':'guides/session_apis.md','guides/events/':'guides/session_apis.md','guides/vr/':'examples/vr_xr/hand_tracking.md','../components/primitives':'components/category_primitives.md','guides/first_3d_scene/03_materials_and_textures':'guides/first_3d_scene/02_materials_and_textures.md','examples/background/background_image.md':'examples/background_environment.md'}
  if(!fs.existsSync(path.join(source,target))&&fixes[target]&&fs.existsSync(path.join(source,fixes[target])))target=fixes[target]
+ if(!fs.existsSync(path.join(source,target))){for(const extension of ['.md','.rst']){if(fs.existsSync(path.join(source,target+extension))){target+=extension;break}}}
  if(!fs.existsSync(path.join(source,target))&&fs.existsSync(path.join(source,target.replace(/\.md$/,'.rst'))))target=target.replace(/\.md$/,'.rst')
  if(!fs.existsSync(path.join(source,target))){const found=files.filter(f=>path.basename(f)===path.basename(target));if(found.length===1)target=path.relative(source,found[0])}
  return (/\.(md|rst)$/.test(target)||p.endsWith('.html')?url(target.replace(/\.html$/,'.md')):'/source/'+target)+(hash?'#'+hash:'')
@@ -71,7 +72,13 @@ for(const f of pages){
 }
 // Keep every source asset at its original relative location under /source/.
 for(const f of files.filter(f=>!f.endsWith('.md')&&!f.includes('/_templates/'))){const dest=path.join(pub,'source',path.relative(source,f));fs.mkdirSync(path.dirname(dest),{recursive:true});fs.copyFileSync(f,dest)}
-fs.writeFileSync(path.join(pub,'_redirects'),redirects.join('\n')+'\n/en/latest/ / 301\n/en/stable/ / 301\n/en/* https://vuer-py.readthedocs.io/en/:splat 200\n')
+// Send legacy release URLs through that snapshot's own source-specific route map.
+// Direct browser fallback keeps Read the Docs independent of proxy challenges.
+for (const release of manifest.versions) {
+ const tag=release.branch?.replace(/^docs\//,'')
+ if(tag && !['latest','stable'].includes(tag)) redirects.push(`/en/${tag}/* ${release.url}/en/latest/:splat 302`)
+}
+fs.writeFileSync(path.join(pub,'_redirects'),redirects.join('\n')+'\n/en/latest/ / 301\n/en/stable/ / 301\n/en/* https://vuer-py.readthedocs.io/en/:splat 302\n')
 fs.writeFileSync(path.join(pub,'llms.txt'),'# Vuer\n\n> Event-driven visualization for physical AI, robotics, VR and AR.\n\n'+pages.map(f=>{const r=path.relative(source,f);return `- [${r}](https://docs.vuer.ai/markdown/${r})`}).join('\n')+'\n')
 const py=['src/vuer','vuer','tassa','nerf_vuer'].find(p=>fs.existsSync(path.join(root,p,'__init__.py')))
 if(py)
