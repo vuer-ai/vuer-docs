@@ -6,3 +6,5 @@ public/llms.txt
 public/_redirects
 
 .venv/
+
+public/**/*.md
