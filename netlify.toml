@@ -1,0 +1,11 @@
+[build]
+base = "docs-site"
+command = "python3 -m pip install -r requirements.txt && npm ci && npm run build"
+publish = "dist/client"
+[build.environment]
+NODE_VERSION = "22"
+PYTHON_VERSION = "3.12"
+[[headers]]
+for = "/versions.json"
+[headers.values]
+Access-Control-Allow-Origin = "*"
