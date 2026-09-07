@@ -7,7 +7,9 @@
   "scripts": {
     "dev": "node scripts/convert.mjs && vite --host 127.0.0.1",
     "build": "node scripts/convert.mjs && vite build && vike prerender && pagefind --site dist/client",
-    "preview": "vite preview --host 127.0.0.1"
+    "preview": "vite preview --host 127.0.0.1",
+    "postinstall": "node scripts/patch-dockit.mjs",
+    "prebuild": "node scripts/patch-dockit.mjs"
   },
   "dependencies": {
     "@dreamlake/dockit": "0.2.14",
