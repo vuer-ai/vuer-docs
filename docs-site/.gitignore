@@ -1,0 +1,8 @@
+node_modules/
+dist/
+public/source/
+public/markdown/
+public/llms.txt
+public/_redirects
+
+.venv/
