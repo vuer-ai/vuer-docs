@@ -9,7 +9,9 @@ const walk=d=>fs.readdirSync(d,{withFileTypes:true}).flatMap(e=>e.isDirectory()&
 const files=source===root?[path.join(root,'README.md'),...(fs.existsSync(path.join(root,'figures'))?walk(path.join(root,'figures')):[])]:walk(source), pages=files.filter(f=>/\.(md|rst)$/.test(f)&&!path.basename(f).startsWith('.')&&!f.includes('/assets/')&&!f.includes('/_static/'))
 const manifest=JSON.parse(fs.readFileSync(path.join(pub,'versions.json'),'utf8'))
 fs.rmSync(path.join(pub,'source'),{recursive:true,force:true})
-const version=(process.env.BRANCH||'').replace(/^docs\/v?/,'') || manifest.current
+const releaseBranch=(process.env.BRANCH||'').match(/^docs\/v?(\d[^/]*)$/)
+const sourceVersion=fs.existsSync(path.join(root,'pyproject.toml'))?fs.readFileSync(path.join(root,'pyproject.toml'),'utf8').match(/^version\s*=\s*["']([^"']+)/m)?.[1]:null
+const version=releaseBranch?.[1] || sourceVersion || manifest.current
 fs.rmSync(out,{recursive:true,force:true}); fs.mkdirSync(out,{recursive:true})
 function url(rel){return '/'+rel.replace(/\.(md|rst)$/,'').replace(/(^|\/)index$/,'').replace(/\/$/,'')}
 function resolveLink(href,rel){
@@ -55,6 +57,7 @@ for(const f of pages){
  })
  text=text.replace(/<!--([\s\S]*?)-->/g,'').replace(/^\[\/\/\]:.*$/gm,'')
  const title=(rel==='index.md'?'Vuer':text.match(/^#\s+(.+)$/m)?.[1]||path.basename(rel,'.md').replaceAll('_',' ')).replace(/<[^>]*>/g,' ').replaceAll('`','').trim()
+ if(source===root){const release=(process.env.BRANCH||'').replace(/^docs\//,'');const versions=JSON.parse(fs.readFileSync(path.join(site,'source-versions.json'),'utf8'));const commit=versions[release];const sourceUrl=commit?'https://github.com/vuer-ai/vuer/commit/'+commit:'https://github.com/vuer-ai/vuer-docs/tree/'+(process.env.BRANCH||'main');text='> **Historical source snapshot**\n> Dedicated documentation did not exist in this release. The original repository README appears below. The [package API](/python-api) is generated from this snapshot’s code. [View the original source commit]('+sourceUrl+').\n\n'+text}
  const section=rel==='index.md'||rel==='quick_start.md'?'Getting Started':({'guides':'Guides','tutorials':'Tutorials','components':'Components','examples':'Examples','api':'Python API','rtc':'Python API'}[rel.split('/')[0]]||'Reference')
  let html=md.render(text).replace(/\b(href|src)="([^"]+)"/g,(_,attr,h)=>`${attr}="${resolveLink(h,rel)}"`)
  html=html.replace(/<h([1-6])>(.*?)<\/h\1>/g,(_,level,content)=>`<h${level} id="${content.replace(/<[^>]+>/g,'').toLowerCase().replace(/[^\w\s-]/g,'').trim().replace(/\s+/g,'-')}">${content}</h${level}>`)
