@@ -9,3 +9,9 @@ PYTHON_VERSION = "3.12"
 for = "/versions.json"
 [headers.values]
 Access-Control-Allow-Origin = "*"
+
+# Keep Read the Docs addon assets available to original /en/<version>/ pages.
+[[redirects]]
+from = "/_/static/*"
+to = "https://vuer-py.readthedocs.io/_/static/:splat"
+status = 200
