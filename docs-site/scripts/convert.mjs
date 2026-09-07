@@ -24,9 +24,14 @@ function resolveLink(href,rel){
  if(!fs.existsSync(path.join(source,target))){const found=files.filter(f=>path.basename(f)===path.basename(target));if(found.length===1)target=path.relative(source,found[0])}
  return (target.endsWith('.md')||p.endsWith('.html')?url(target.replace(/\.html$/,'.md')):'/source/'+target)+(hash?'#'+hash:'')
 }
+function apiUrl(name){
+ const parts=name.replace(/^vuer\.?/,'').split('.').filter(Boolean), base=fs.existsSync(path.join(root,'src/vuer'))?path.join(root,'src/vuer'):path.join(root,'vuer');
+ for(let n=parts.length;n>=0;n--){const module=parts.slice(0,n).join('/');if(fs.existsSync(path.join(base,module+'.py'))||fs.existsSync(path.join(base,module,'__init__.py'))){return '/python-api'+(module?'/'+module:'')+(n<parts.length?'#'+parts.slice(n).join('-').toLowerCase():'')}}
+ return '/python-api'
+}
 function rst(body){
  const mods=[...body.matchAll(/\.\. auto(?:module|class|function)::\s*(\S+)/g)].map(m=>m[1])
- if(mods.length)return mods.map(m=>`[${m} API reference](/python-api/${m.replace(/^vuer\.?/,'').replaceAll('.','/')})`).join('\n\n')
+ if(mods.length)return mods.map(m=>`[${m} API reference](${apiUrl(m)})`).join('\n\n')
  if(body.includes('.. raw:: html'))return body.split('.. raw:: html')[1].replace(/^ {3}/gm,'')
  if(body.includes('.. toctree::')) return body.split(/\.\. toctree::/).slice(1).flatMap(s=>s.split('\n').map(l=>l.trim()).filter(l=>l&&!l.startsWith(':')).map(l=>{const m=l.match(/^(.*?)\s*<(.+)>$/);const dest=m?m[2]:l; return `- [${m?m[1]:dest.replace(/\.md$/,'').split('/').pop().replaceAll('_',' ')}](${dest.endsWith('.md')||dest.includes('://')?dest:dest+'.md'})`})).join('\n')
  return '```rst\n'+body.trim()+'\n```'
@@ -48,16 +53,16 @@ for(const f of pages){
  html=html.replace(/<h([1-6])>(.*?)<\/h\1>/g,(_,level,content)=>`<h${level} id="${content.replace(/<[^>]+>/g,'').toLowerCase().replace(/[^\w\s-]/g,'').trim().replace(/\s+/g,'-')}">${content}</h${level}>`)
  const dest=path.join(out,rel.replace(/\.md$/,''));fs.mkdirSync(dest,{recursive:true})
  fs.writeFileSync(path.join(dest,'content.html'),html)
- fs.writeFileSync(path.join(dest,'content.md'),text)
+ fs.writeFileSync(path.join(dest,'content.txt'),text)
  fs.writeFileSync(path.join(dest,'+Page.mdx'),`---\ntitle: ${JSON.stringify(title)}\nsection: ${JSON.stringify(section)}\norder: ${rel==='index.md'?0:rel==='quick_start.md'?1:++count+10}\ndescription: ${JSON.stringify(title+' — Vuer documentation')}\n---\n\nimport html from './content.html?raw'\n\n<div className="legacy-doc" dangerouslySetInnerHTML={{ __html: html }} />\n`)
  const route=url(rel)||'/';redirects.push(`/en/latest/${rel.replace(/\.md$/,'.html')} ${route} 301`,`/en/stable/${rel.replace(/\.md$/,'.html')} ${route} 301`)
  fs.mkdirSync(path.dirname(path.join(pub,'markdown',rel)),{recursive:true});fs.writeFileSync(path.join(pub,'markdown',rel),text)
 }
 // Keep every source asset at its original relative location under /source/.
 for(const f of files.filter(f=>!f.endsWith('.md')&&!f.includes('/_templates/'))){const dest=path.join(pub,'source',path.relative(source,f));fs.mkdirSync(path.dirname(dest),{recursive:true});fs.copyFileSync(f,dest)}
-fs.writeFileSync(path.join(pub,'_redirects'),redirects.join('\n')+'\n/en/latest/ / 301\n/en/stable/ / 301\n')
+fs.writeFileSync(path.join(pub,'_redirects'),redirects.join('\n')+'\n/en/latest/ / 301\n/en/stable/ / 301\n/en/* https://vuer-py.readthedocs.io/en/:splat 200\n')
 fs.writeFileSync(path.join(pub,'llms.txt'),'# Vuer\n\n> Event-driven visualization for physical AI, robotics, VR and AR.\n\n'+pages.map(f=>{const r=path.relative(source,f);return `- [${r}](https://docs.vuer.ai/markdown/${r})`}).join('\n')+'\n')
 const py=fs.existsSync(path.join(root,'src/vuer'))?'src/vuer':'vuer'
 execFileSync(process.env.PYTHON||'python3',['-m','autodoc_py',path.join(root,py),'--output',path.join(out,'python-api'),'--module','vuer','--url-prefix','/python-api','--section','Python API','--source-url',`https://github.com/vuer-ai/vuer-docs/blob/${process.env.BRANCH||'main'}/${py}`],{stdio:'inherit'})
-for(const f of walk(out).filter(f=>f.endsWith('+Page.mdx'))){const rel=path.relative(out,path.dirname(f));const markdown=fs.existsSync(path.join(path.dirname(f),'content.md'))?fs.readFileSync(path.join(path.dirname(f),'content.md'),'utf8'):fs.readFileSync(f,'utf8');const dest=path.join(pub,(rel==='index'?'index':rel)+'.md');fs.mkdirSync(path.dirname(dest),{recursive:true});fs.writeFileSync(dest,markdown)}
+for(const f of walk(out).filter(f=>f.endsWith('+Page.mdx'))){const rel=path.relative(out,path.dirname(f));const markdown=fs.existsSync(path.join(path.dirname(f),'content.txt'))?fs.readFileSync(path.join(path.dirname(f),'content.txt'),'utf8'):fs.readFileSync(f,'utf8');const dest=path.join(pub,(rel==='index'?'index':rel)+'.md');fs.mkdirSync(path.dirname(dest),{recursive:true});fs.writeFileSync(dest,markdown)}
 console.log(`Converted ${pages.length} authored pages, preserved source assets, and generated Python API.`)
