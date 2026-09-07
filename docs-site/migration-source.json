@@ -3,7 +3,7 @@
   "sourceRepository": "https://github.com/vuer-ai/vuer",
   "sourceSha": "15ae805d55f416ba5051c9392e1a9e73f426a8a7",
   "sourceArchiveBranch": "archive/v0.0.31rc4",
-  "toolingCommit": "74ab063d878af01cd7c5173447554a80a606197e",
+  "toolingCommit": "8f934131365acbe48e64c255ce6814f1127f71d8",
   "legacyUrl": "https://vuer-py.readthedocs.io/en/v0.0.31rc4/",
   "priorRenderedBuild": false
 }
