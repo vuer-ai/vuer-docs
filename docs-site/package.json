@@ -11,7 +11,7 @@
     "postinstall": "node scripts/patch-dockit.mjs",
     "prebuild": "node scripts/patch-dockit.mjs",
     "import:legacy": "node scripts/import-legacy.mjs",
-    "test": "node --test scripts/html-to-mdx.test.mjs"
+    "test": "node --test scripts/*.test.mjs"
   },
   "dependencies": {
     "@dreamlake/dockit": "0.2.14",

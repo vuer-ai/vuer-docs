@@ -37,3 +37,16 @@ if(!toc.includes(newEdit)){
  assert.equal(toc.split(oldEdit).length-1,1,'Dockit edit-link structure changed; inspect before patching')
  toc=toc.replace(oldEdit,newEdit);fs.writeFileSync(tocFile,toc)
 }
+
+// Complete the page outline without changing the site's main sidebar.
+const outlineImport = 'import { outlineHeadings, visibleOutline } from "./toc-outline.mjs";';
+const tocPatches = JSON.parse(fs.readFileSync(new URL('./toc-patches.json', import.meta.url), 'utf8'));
+for (const [before, after] of tocPatches) {
+  if (toc.includes(after)) continue;
+  assert.equal(toc.split(before).length - 1, 1, 'Dockit TOC changed; inspect before upgrading: ' + before.slice(0, 80));
+  toc = toc.replace(before, after);
+}
+if (!toc.includes(outlineImport)) toc = outlineImport + '\n' + toc;
+fs.writeFileSync(tocFile, toc);
+fs.copyFileSync(new URL('./toc-outline.mjs', import.meta.url), new URL('../node_modules/@dreamlake/dockit/dist/components/toc-outline.mjs', import.meta.url));
+console.log('Dockit complete heading outline compatibility check passed');
