@@ -1,11 +1,11 @@
-// Dockit 0.2.14 assumes version subdomains; Netlify uses docs-vX--site.
+// Vuer compatibility patches for Dockit; Netlify uses docs-vX--site.
 // Preserve the explicit build version while still loading the shared manifest.
 import fs from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import assert from 'node:assert/strict'
-const filename=fileURLToPath(new URL('../node_modules/@dreamlake/dockit/dist/components/VersionBadge.js',import.meta.url))
-const before='} else if (manifest?.current) {'
-const after='} else if (manifest?.current && !version) {'
+const filename=fileURLToPath(new URL('../node_modules/@dreamlake/dockit/dist/lib/version-badge.js',import.meta.url))
+const before='return manifest?.current || version;'
+const after='return version || manifest?.current;'
 export function patch(source){
  if(source.includes(after))return source
  assert.equal(source.split(before).length-1,1,'Dockit version patch expected exactly one known fallback; inspect new framework before upgrading')
@@ -88,16 +88,10 @@ for(const [before,after] of [[oldRoot,newRoot],[oldPath,newPath]]){
 fs.writeFileSync(navFile,nav);
 toc=fs.readFileSync(tocFile,'utf8');
 const oldSlug='const slug = currentPath === "/" ? "index" : currentPath.replace(/^\\//, "");';
-const newSlug='const slug = currentPath === "/" ? "index" : ["/components", "/examples"].includes(currentPath) ? currentPath.slice(1) + "/index" : currentPath.replace(/^\\//, "");';
+const newSlug='const slug = currentPath === "/" ? "index" : ["/components", "/examples", "/releases"].includes(currentPath) ? currentPath.slice(1) + "/index" : currentPath.replace(/^\\//, "");';
 if(!toc.includes(newSlug)){assert.equal(toc.split(oldSlug).length-1,1,'Inspect Dockit catalog edit links before upgrading');fs.writeFileSync(tocFile,toc.replace(oldSlug,newSlug));}
 // Netlify pretty URLs lowercase filenames; resolve their authored metadata too.
 nav=fs.readFileSync(navFile,'utf8');
 const oldNormalize='return clean.replace(/\\/+$/, "") || "/";';
 const newNormalize='const normalized = clean.replace(/\\/+$/, "") || "/";\n  return pages.find((page) => page.path.toLowerCase() === normalized.toLowerCase())?.path || normalized;';
 if(!nav.includes(newNormalize)){assert.equal(nav.split(oldNormalize).length-1,1,'Inspect Dockit case normalization before upgrading');fs.writeFileSync(navFile,nav.replace(oldNormalize,newNormalize));}
-// Top-level tabs must work while hydration/client-router startup is in progress.
-const stripFile=fileURLToPath(new URL('../node_modules/@dreamlake/dockit/dist/components/TabStrip.js',import.meta.url));
-let strip=fs.readFileSync(stripFile,'utf8');
-const oldTabHref='href: external ? tab.href : tab.landing,';
-const newTabHref='href: external ? tab.href : tab.landing,\n                  "data-vike": "false",';
-if(!strip.includes(newTabHref)){assert.equal(strip.split(oldTabHref).length-1,1,'Inspect Dockit top-level links before upgrading');fs.writeFileSync(stripFile,strip.replace(oldTabHref,newTabHref));}

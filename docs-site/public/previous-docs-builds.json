@@ -1,5 +1,5 @@
 {
-  "preservedBefore": "2026-09-08 navigation update",
+  "preservedBefore": "2026-09-08 navigation and Dockit 0.2.15 updates",
   "builds": [
     {
       "version": "0.1.6",
@@ -20,6 +20,27 @@
       "branch": "main",
       "commit": "27d3dab7d08fb5a2da6daaab35d5f2bc90909962",
       "url": "https://6a9fa76155790b0008bb3fac--vuer-docs.netlify.app"
+    },
+    {
+      "version": "main",
+      "branch": "main",
+      "commit": "536d311177ad9abbd37068f3311f77f84d8d80f7",
+      "url": "https://6aa027bcf807ce00086ad07d--vuer-docs.netlify.app",
+      "preservedBefore": "Dockit 0.2.15 and individual release entries"
+    },
+    {
+      "version": "latest",
+      "branch": "docs/latest",
+      "commit": "17cf1232b0581d3dca447748f463ed69d7e3cf50",
+      "url": "https://6aa027484f345c000884eac7--vuer-docs.netlify.app",
+      "preservedBefore": "Dockit 0.2.15 and individual release entries"
+    },
+    {
+      "version": "v0.1.6",
+      "branch": "docs/v0.1.6",
+      "commit": "5238a80536a1c9ca9493332ee078a1627063cd85",
+      "url": "https://6aa027456475850008a351e5--vuer-docs.netlify.app",
+      "preservedBefore": "Dockit 0.2.15 and individual release entries"
     }
   ]
 }
