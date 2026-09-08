@@ -50,3 +50,43 @@ if (!toc.includes(outlineImport)) toc = outlineImport + '\n' + toc;
 fs.writeFileSync(tocFile, toc);
 fs.copyFileSync(new URL('./toc-outline.mjs', import.meta.url), new URL('../node_modules/@dreamlake/dockit/dist/components/toc-outline.mjs', import.meta.url));
 console.log('Dockit complete heading outline compatibility check passed');
+// Preserve legacy route families while scoping them to the five navigation tabs.
+const tabsFile=fileURLToPath(new URL('../node_modules/@dreamlake/dockit/dist/lib/tabs.js',import.meta.url));
+let tabSource=fs.readFileSync(tabsFile,'utf8');
+const oldSegment='const seg = firstSegment(url);';
+const newSegment='const rawSegment = firstSegment(url);\n  const aliases = {api: "python-api", rtc: "python-api", RELEASE_NOTES: "releases", CHANGE_LOG: "releases", versions: "releases"};\n  const seg = aliases[rawSegment] || rawSegment;';
+if(!tabSource.includes(newSegment)){
+ assert.equal(tabSource.split(oldSegment).length-1,1,'Inspect Dockit route scoping before upgrading');
+ tabSource=tabSource.replace(oldSegment,newSegment);fs.writeFileSync(tabsFile,tabSource);
+}
+// Previous / next follows the selected tab and its section ordering.
+const navFile=fileURLToPath(new URL('../node_modules/@dreamlake/dockit/dist/lib/navigation.js',import.meta.url));
+let nav=fs.readFileSync(navFile,'utf8');
+const oldList='const list = opts.includeHidden || here?.hidden ? pages : pages.filter((p) => !p.hidden);';
+const newList='const list = (opts.includeHidden || here?.hidden ? pages : pages.filter((p) => !p.hidden)).filter((p) => urlInTab(p.path, tabForUrl(norm)));';
+if(!nav.includes(newList)){
+ assert.equal(nav.split(oldList).length-1,1,'Inspect Dockit adjacency before upgrading');
+ nav='import { tabForUrl, urlInTab } from "./tabs.js";\n'+nav.replace(oldList,newList);fs.writeFileSync(navFile,nav);
+}
+// Give the mobile tab strip its own row instead of clipping it behind the brand.
+bar=fs.readFileSync(topbar,'utf8');
+const oldTabsClass='className: "flex items-stretch",';
+const newTabsClass='className: "doc-navigation-tabs flex items-stretch",';
+if(!bar.includes(newTabsClass)){
+ assert.equal(bar.split(oldTabsClass).length-1,1,'Inspect Dockit tab container before upgrading');
+ fs.writeFileSync(topbar,bar.replace(oldTabsClass,newTabsClass));
+}
+// Both directory URLs and old explicit /index links address the same catalog.
+nav=fs.readFileSync(navFile,'utf8');
+const oldRoot='if (clean === "/") return "/";';
+const newRoot='if (clean === "/") return "/";\n  if (["/components/index", "/components/index/", "/examples/index", "/examples/index/"].includes(clean)) return clean.split("/index")[0];';
+const oldPath='const path = dir === "index" ? "/" : `/${dir}`;';
+const newPath='const path = dir === "index" ? "/" : normalizePath(`/${dir}`);';
+for(const [before,after] of [[oldRoot,newRoot],[oldPath,newPath]]){
+ if(!nav.includes(after)){assert.equal(nav.split(before).length-1,1,'Inspect Dockit catalog URL normalization before upgrading');nav=nav.replace(before,after);}
+}
+fs.writeFileSync(navFile,nav);
+toc=fs.readFileSync(tocFile,'utf8');
+const oldSlug='const slug = currentPath === "/" ? "index" : currentPath.replace(/^\\//, "");';
+const newSlug='const slug = currentPath === "/" ? "index" : ["/components", "/examples"].includes(currentPath) ? currentPath.slice(1) + "/index" : currentPath.replace(/^\\//, "");';
+if(!toc.includes(newSlug)){assert.equal(toc.split(oldSlug).length-1,1,'Inspect Dockit catalog edit links before upgrading');fs.writeFileSync(tocFile,toc.replace(oldSlug,newSlug));}

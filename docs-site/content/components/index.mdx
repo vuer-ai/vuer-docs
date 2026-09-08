@@ -5,7 +5,202 @@ order: 46
 description: "Component Index — Vuer documentation"
 ---
 
+import { Catalog } from "@docs/components/Catalog"
+
 # Component Index
+
+Find components by name or browse a category.
+
+<Catalog label="Components" categories={["Geometry", "Models & Point Clouds", "Materials & Backgrounds", "Cameras", "Interaction", "Layout & Helpers"]} entries={[
+  {
+    "title": "Arrow",
+    "href": "/components/arrow",
+    "category": "Geometry",
+    "description": "Render directional arrows for vectors, forces, and velocity fields."
+  },
+  {
+    "title": "Bounding Box",
+    "href": "/components/bounding_box",
+    "category": "Geometry",
+    "description": "Display spatial bounds with configurable edges and wall opacity."
+  },
+  {
+    "title": "Line",
+    "href": "/components/line",
+    "category": "Geometry",
+    "description": "Draw lines and splines from 3D points."
+  },
+  {
+    "title": "TriMesh",
+    "href": "/components/trimesh",
+    "category": "Geometry",
+    "description": "Render triangle meshes from vertices and faces."
+  },
+  {
+    "title": "Bvh",
+    "href": "/components/bvh",
+    "category": "Models & Point Clouds",
+    "description": "Load skeletal motion capture animations from BVH files."
+  },
+  {
+    "title": "Glb",
+    "href": "/components/glb",
+    "category": "Models & Point Clouds",
+    "description": "Load GLB and GLTF models with materials and animations."
+  },
+  {
+    "title": "Obj",
+    "href": "/components/obj",
+    "category": "Models & Point Clouds",
+    "description": "Load Wavefront OBJ models and their MTL materials."
+  },
+  {
+    "title": "Pcd",
+    "href": "/components/pcd",
+    "category": "Models & Point Clouds",
+    "description": "Load point cloud files from sensors, ROS, and PCL pipelines."
+  },
+  {
+    "title": "Ply",
+    "href": "/components/ply",
+    "category": "Models & Point Clouds",
+    "description": "Load PLY geometry and point cloud data."
+  },
+  {
+    "title": "PointCloud",
+    "href": "/components/pointcloud",
+    "category": "Models & Point Clouds",
+    "description": "Display point positions and colors from arrays."
+  },
+  {
+    "title": "Urdf",
+    "href": "/components/urdf",
+    "category": "Models & Point Clouds",
+    "description": "Load robot models described by URDF files."
+  },
+  {
+    "title": "LumaSplats",
+    "href": "/components/luma_splats",
+    "category": "Models & Point Clouds",
+    "description": "Display Gaussian splat captures exported from Luma AI."
+  },
+  {
+    "title": "SparkSplats",
+    "href": "/components/spark_splats",
+    "category": "Models & Point Clouds",
+    "description": "Load compressed Gaussian splats in the SparkJS .spz format."
+  },
+  {
+    "title": "Splat",
+    "href": "/components/splat",
+    "category": "Models & Point Clouds",
+    "description": "Display reconstructed scenes using Gaussian splatting."
+  },
+  {
+    "title": "ImageBackground",
+    "href": "/components/image_background",
+    "category": "Materials & Backgrounds",
+    "description": "Display depth-aware images, stereo views, and RGB-D backgrounds."
+  },
+  {
+    "title": "SceneBackground",
+    "href": "/components/scene_background",
+    "category": "Materials & Backgrounds",
+    "description": "Set the background of your 3D scene."
+  },
+  {
+    "title": "CameraView",
+    "href": "/components/camera_views",
+    "category": "Cameras",
+    "description": "Render images from virtual cameras at arbitrary viewpoints."
+  },
+  {
+    "title": "Frustum",
+    "href": "/components/frustum",
+    "category": "Cameras",
+    "description": "Visualize camera fields of view, placements, and trajectories."
+  },
+  {
+    "title": "Gripper",
+    "href": "/components/gripper",
+    "category": "Interaction",
+    "description": "Visualize robot grippers and end-effector poses."
+  },
+  {
+    "title": "Hands",
+    "href": "/components/hands",
+    "category": "Interaction",
+    "description": "Stream WebXR hand tracking events to Python."
+  },
+  {
+    "title": "KeyboardMonitor",
+    "href": "/components/keyboard_monitor",
+    "category": "Interaction",
+    "description": "Send browser keyboard events to your Python backend."
+  },
+  {
+    "title": "MotionControllers",
+    "href": "/components/motion_controllers",
+    "category": "Interaction",
+    "description": "Track VR controller poses and input events."
+  },
+  {
+    "title": "Movable",
+    "href": "/components/movable",
+    "category": "Interaction",
+    "description": "Make scene objects draggable and handle their movement events."
+  },
+  {
+    "title": "Pivot",
+    "href": "/components/pivot",
+    "category": "Interaction",
+    "description": "Manipulate objects with interactive transform controls."
+  },
+  {
+    "title": "Billboard",
+    "href": "/components/billboard",
+    "category": "Layout & Helpers",
+    "description": "Keep child objects and labels facing the camera."
+  },
+  {
+    "title": "Center",
+    "href": "/components/center",
+    "category": "Layout & Helpers",
+    "description": "Center imported objects using their bounding boxes."
+  },
+  {
+    "title": "CoordsMarker",
+    "href": "/components/coords_marker",
+    "category": "Layout & Helpers",
+    "description": "Display coordinate frames and orientations in 3D."
+  },
+  {
+    "title": "Grid",
+    "href": "/components/grid",
+    "category": "Layout & Helpers",
+    "description": "Add a ground reference grid for scale and orientation."
+  },
+  {
+    "title": "Group",
+    "href": "/components/group",
+    "category": "Layout & Helpers",
+    "description": "Apply shared transforms to a hierarchy of objects."
+  },
+  {
+    "title": "Text",
+    "href": "/components/text",
+    "category": "Layout & Helpers",
+    "description": "Add flat text labels and annotations to a 3D scene."
+  },
+  {
+    "title": "Text3D",
+    "href": "/components/text3d",
+    "category": "Layout & Helpers",
+    "description": "Create extruded 3D text geometry."
+  }
+]} />
+
+## Topic overviews
 
 Vuer provides a rich set of components for building 3D visualizations.
 
