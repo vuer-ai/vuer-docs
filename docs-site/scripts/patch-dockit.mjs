@@ -54,7 +54,7 @@ console.log('Dockit complete heading outline compatibility check passed');
 const tabsFile=fileURLToPath(new URL('../node_modules/@dreamlake/dockit/dist/lib/tabs.js',import.meta.url));
 let tabSource=fs.readFileSync(tabsFile,'utf8');
 const oldSegment='const seg = firstSegment(url);';
-const newSegment='const rawSegment = firstSegment(url);\n  const aliases = {api: "python-api", rtc: "python-api", RELEASE_NOTES: "releases", CHANGE_LOG: "releases", versions: "releases"};\n  const seg = aliases[rawSegment] || rawSegment;';
+const newSegment='const rawSegment = firstSegment(url);\n  const aliases = {api: "python-api", rtc: "python-api", release_notes: "releases", change_log: "releases", versions: "releases"};\n  const seg = aliases[rawSegment.toLowerCase()] || rawSegment;';
 if(!tabSource.includes(newSegment)){
  assert.equal(tabSource.split(oldSegment).length-1,1,'Inspect Dockit route scoping before upgrading');
  tabSource=tabSource.replace(oldSegment,newSegment);fs.writeFileSync(tabsFile,tabSource);
@@ -90,3 +90,8 @@ toc=fs.readFileSync(tocFile,'utf8');
 const oldSlug='const slug = currentPath === "/" ? "index" : currentPath.replace(/^\\//, "");';
 const newSlug='const slug = currentPath === "/" ? "index" : ["/components", "/examples"].includes(currentPath) ? currentPath.slice(1) + "/index" : currentPath.replace(/^\\//, "");';
 if(!toc.includes(newSlug)){assert.equal(toc.split(oldSlug).length-1,1,'Inspect Dockit catalog edit links before upgrading');fs.writeFileSync(tocFile,toc.replace(oldSlug,newSlug));}
+// Netlify pretty URLs lowercase filenames; resolve their authored metadata too.
+nav=fs.readFileSync(navFile,'utf8');
+const oldNormalize='return clean.replace(/\\/+$/, "") || "/";';
+const newNormalize='const normalized = clean.replace(/\\/+$/, "") || "/";\n  return pages.find((page) => page.path.toLowerCase() === normalized.toLowerCase())?.path || normalized;';
+if(!nav.includes(newNormalize)){assert.equal(nav.split(oldNormalize).length-1,1,'Inspect Dockit case normalization before upgrading');fs.writeFileSync(navFile,nav.replace(oldNormalize,newNormalize));}
