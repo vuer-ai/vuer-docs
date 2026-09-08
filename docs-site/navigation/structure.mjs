@@ -1,5 +1,5 @@
 // Navigation metadata is independent of URLs and original page headings.
-export const sectionOrder = ['Getting Started','Building Scenes','Cameras & Capture','Development & Hosting','Robotics & XR','Overview','Geometry','Models & Point Clouds','Materials & Backgrounds','Scenes & Meshes','Point Clouds & RGB-D','Gaussian Splats','Cameras','Interaction','Layout & Helpers','VR & XR','Core','Sessions & Workspace','Schemas','Cameras & Frames','RTC','CLI','Utilities','Releases'];
+export const sectionOrder = ['Getting Started','Building Scenes','Cameras & Capture','Development & Hosting','Robotics & XR','Overview','Geometry','Models & Point Clouds','Materials & Backgrounds','Scenes & Meshes','Point Clouds & RGB-D','Gaussian Splats','Cameras','Interaction','Layout & Helpers','VR & XR','Core','Sessions & Workspace','Schemas','Cameras & Frames','RTC','CLI','Utilities','Releases','Upcoming','Released Versions','Archives'];
 export const tabs = [
  {id:'learn',label:'Learn',numeral:'I',landing:'/',urlPrefix:'/learn'},
  {id:'components',label:'Components',numeral:'II',landing:'/components',urlPrefix:'/components'},
@@ -23,7 +23,9 @@ const groups = {
  'Point Clouds & RGB-D': ['pointer','background/depth_image','point_clouds/pointcloud','point_clouds/animation','point_clouds/animation_upsert','point_clouds/depth_pointcloud','visualization/depth_texture'].map(x=>'examples/'+x),
  'Gaussian Splats':['examples/openai_sora'],
  'VR & XR':['examples/background/vr_hud','examples/26_webxr_mesh','examples/vr_xr/body_tracking','examples/vr_xr/hand_tracking','examples/vr_xr/motion_controllers'],
- 'Releases':['releases/index','releases/unreleased','releases/v0.1.5','releases/v0.0.80rc4','releases/v0.0.80rc2','releases/v0.0.80rc1','CHANGE_LOG','versions'],
+ 'Upcoming':['releases/unreleased'],
+ 'Released Versions':['releases/v0.1.5','releases/v0.0.80rc4','releases/v0.0.80rc2','releases/v0.0.80rc1'],
+ 'Archives':['CHANGE_LOG','versions'],
 };
 const titles = {
  index:'Overview',quick_start:'Getting Started','tutorials/basics':'Key Concepts',
@@ -49,7 +51,7 @@ export function navigationFor(slug) {
   const i=items.indexOf(slug);
   if(i>=0) return {...result,section,order:sectionOrder.indexOf(section)*100+i};
  }
- if(['components/index','examples/index','python-api'].includes(slug)) return {...result,section:'Overview',order:-1};
+ if(['components/index','examples/index','python-api','releases/index'].includes(slug)) return {...result,section:'Overview',order:-1};
  if(slug.startsWith('api/') || slug.startsWith('components/category_') || slug==='components/component_index' || ['examples/background_environment','examples/meshes','examples/point_clouds','tutorials/basics/setting_a_scene'].includes(slug)) return {...result,hidden:true};
  if(slug.startsWith('rtc/')) return {...result,section:'RTC',order:sectionOrder.indexOf('RTC')*100+90+(slug.endsWith('scene_store')?1:0)};
  if(slug.startsWith('python-api/')) {
