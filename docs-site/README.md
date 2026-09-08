@@ -14,28 +14,28 @@ npm run preview
 
 Edit `content/**/*.mdx` directly. `npm run build` copies these sources to disposable Vike pages, generates the Python API, prerenders HTML, and builds Pagefind search. HTML is a deployment output; authored pages no longer import HTML strings or use `dangerouslySetInnerHTML`. Code fences, tables, lists and headings are native MDX. Markdown downloads and `/llms.txt` are published alongside the site.
 
-`SceneEmbed`, `DocImage`, `DocVideo`, `Callout` and `DocHero` are reusable React components. `Tabs` and `Tab` group genuine alternatives, such as Python versus browser installation on the homepage and Getting Started page. Tabs support arrow keys, Home/End, ARIA relationships, and links to headings inside an inactive panel. Sequential instructions remain outside tabs.
+`SceneEmbed`, `DocImage`, `DocVideo`, `Callout` and `DocHero` are reusable React components. `ButtonGroup` and `ButtonOption` present compact, segmented choices, such as Python versus browser installation on the homepage and Getting Started page. Button groups support arrow keys, Home/End, ARIA relationships, and links to headings inside an inactive panel. Sequential instructions remain outside the group. The older `Tabs`/`Tab` names remain compatibility aliases.
 
 ```mdx
-import { Tabs, Tab } from '@docs/components/Docs'
+import { ButtonGroup, ButtonOption } from '@docs/components/Docs'
 
-<Tabs label="Environment">
-<Tab label="Python">
+<ButtonGroup label="Environment">
+<ButtonOption label="Python">
 
 Python instructions here.
 
-</Tab>
-<Tab label="Browser">
+</ButtonOption>
+<ButtonOption label="Browser">
 
 Browser instructions here.
 
-</Tab>
-</Tabs>
+</ButtonOption>
+</ButtonGroup>
 ```
 
 ## Legacy import
 
-`scripts/import-legacy.mjs` is a one-time import tool, not part of normal builds. It handles the original MyST/RST sources and converts their rendered structure into native MDX with `scripts/html-to-mdx.mjs`. The importer refuses to overwrite existing content unless explicitly invoked with `--overwrite`; doing so replaces editorial MDX changes, including authored tabs. Preserve edits in Git before any deliberate re-import.
+`scripts/import-legacy.mjs` is a one-time import tool, not part of normal builds. It handles the original MyST/RST sources and converts their rendered structure into native MDX with `scripts/html-to-mdx.mjs`. The importer refuses to overwrite existing content unless explicitly invoked with `--overwrite`; doing so replaces editorial MDX changes, including authored button groups. Preserve edits in Git before any deliberate re-import.
 
 ## Historical snapshots
 

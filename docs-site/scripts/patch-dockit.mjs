@@ -115,3 +115,31 @@ for(const [before,after] of [
  }
 }
 fs.writeFileSync(paletteFile,palette);
+
+// Backport the configurable 280px sidebar until the upstream release.
+const layoutFile=fileURLToPath(new URL('../node_modules/@dreamlake/dockit/dist/renderer/Layout.js',import.meta.url));
+let layout=fs.readFileSync(layoutFile,'utf8');
+for(const [before,after,count] of [
+ ['md:grid-cols-[240px_minmax(0,1fr)]','md:grid-cols-[var(--doc-sidebar-width,280px)_minmax(0,1fr)]',2],
+ ['lg:grid-cols-[240px_minmax(0,1fr)_240px]','lg:grid-cols-[var(--doc-sidebar-width,280px)_minmax(0,1fr)_240px]',1],
+]) {
+ if(!layout.includes(after)) {
+  assert.equal(layout.split(before).length-1,count,'Inspect Dockit sidebar columns before upgrading');
+  layout=layout.replaceAll(before,after);
+ }
+}
+fs.writeFileSync(layoutFile,layout);
+
+// Stable scrollbar gutter and one-line section labels, matching upstream.
+const sidebarFile=fileURLToPath(new URL('../node_modules/@dreamlake/dockit/dist/components/Sidebar.js',import.meta.url));
+let sidebar=fs.readFileSync(sidebarFile,'utf8');
+for(const [before,after] of [
+ ['className: "hidden md:flex sticky overflow-y-auto flex-col"','className: "doc-sidebar hidden md:flex sticky overflow-y-auto flex-col"'],
+ ['jsx("span", { children: group.label })','jsx("span", { title: group.label, children: group.label })'],
+]) {
+ if(!sidebar.includes(after)) {
+  assert.equal(sidebar.split(before).length-1,1,'Inspect Dockit sidebar markup before upgrading');
+  sidebar=sidebar.replace(before,after);
+ }
+}
+fs.writeFileSync(sidebarFile,sidebar);
