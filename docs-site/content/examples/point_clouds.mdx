@@ -1,0 +1,45 @@
+---
+title: "Point Clouds"
+section: "Examples"
+order: 78
+description: "Point Clouds — Vuer documentation"
+---
+
+import { DocImage } from '@docs/components/Docs'
+
+# Point Clouds
+
+This section covers displaying point cloud data in Vuer, including loading from files and programmatic streaming.
+
+## Show Point Clouds Programmatically and Fast
+
+Learn **two methods** for displaying point clouds: loading PLY files from a static server or sending vertices/colors directly via websocket.
+
+**[View full example →](/examples/point_clouds/pointcloud)**
+
+<DocImage src="/source/examples/figures/pointcloud.png" width="80%" />
+
+## PointCloud Animation
+
+Animate point clouds using `TimelineControls` and the global `app.update` method to broadcast updates to all connected clients.
+
+**[View full example →](/examples/point_clouds/animation)**
+
+## PointCloud Animation (Upsert)
+
+Similar to the animation example above, but uses session-based `proxy.upsert` to target specific client sessions instead of global broadcasting.
+
+**[View full example →](/examples/point_clouds/animation_upsert)**
+
+## Depth Point Cloud
+
+Generate point clouds directly from depth images using the `DepthPointCloud` component with colormap support.
+
+**[View full example →](/examples/point_clouds/depth_pointcloud)**
+
+## Example List
+
+- [Programmatic PointCloud](/examples/point_clouds/pointcloud)
+- [PointCloud Animation](/examples/point_clouds/animation)
+- [PointCloud Animation (Upsert)](/examples/point_clouds/animation_upsert)
+- [Depth Point Cloud](/examples/point_clouds/depth_pointcloud)

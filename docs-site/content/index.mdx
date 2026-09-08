@@ -1,0 +1,167 @@
+---
+title: "Vuer"
+section: "Getting Started"
+order: 0
+description: "Vuer — Vuer documentation"
+---
+
+import { Callout, SceneEmbed, DocHero, Tabs, Tab } from '@docs/components/Docs'
+
+<DocHero />
+
+Vuer is a light-weight visualization toolkit for interacting with dynamic 3D and robotics data. It is VR and AR ready, and can be run on mobile devices. To get started, just run:
+
+<Tabs label="Installation environment">
+<Tab label="Python">
+
+```shell
+pip install 'vuer==0.1.6'
+```
+
+</Tab>
+<Tab label="Browser (PyScript)">
+
+Vuer can run directly in the browser via PyScript and Pyodide. Server dependencies are auto-excluded on Emscripten:
+
+```python
+import micropip
+await micropip.install("vuer")
+from vuer.schemas import Scene, Box, Urdf
+```
+
+</Tab>
+</Tabs>
+
+<Callout>
+  **Note for Mac Users**
+
+  If you encounter build issues with `msgpack` on older systems, you may need gcc\@11:
+
+  brew install gcc\@11
+
+  Modern versions of macOS should work with the pre-built wheels.
+</Callout>
+
+Here is an example that loads a URDF file and displays it in the browser. For a more comprehensive list of examples, please refer to the [examples](/examples/meshes/mesh_loading) page.
+
+```python
+from vuer import Vuer
+from vuer.schemas import DefaultScene, Urdf, OrbitControls
+
+app = Vuer()
+
+
+@app.spawn(start=True)
+async def main(sess):
+    sess.set @ DefaultScene(
+        Urdf(src="https://raw.githubusercontent.com/nasa-jpl/m2020-urdf-models/main/rover/m2020.urdf"),
+        up=[0, 0, -1],  # Z-down coordinate system
+        bgChildren=[OrbitControls(key="OrbitControls")]
+    )
+
+    await sess.forever()
+```
+
+<SceneEmbed src="https://vuer.ai//?hideUI=true&reconnect=True&scene=h6hjaGlsZHJlbpGEqGNoaWxkcmVukYaoY2hpbGRyZW6Qo3RhZ6RVcmRmo2tleaExo3NyY9lSaHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL25hc2EtanBsL20yMDIwLXVyZGYtbW9kZWxzL21haW4vcm92ZXIvbTIwMjAudXJkZqtqb2ludFZhbHVlc4Cocm90YXRpb26Ty0AJHrhR64UfAACjdGFnp01vdmFibGWja2V5oTKocG9zaXRpb26TAADLP8MzMzMzMzOjdGFnpVNjZW5lo2tleaEzonVwkwAAAahzaG93TGV2YcKqYmdDaGlsZHJlbpCrcmF3Q2hpbGRyZW6VhKhjaGlsZHJlbpCjdGFnrEFtYmllbnRMaWdodKNrZXmnYW1iaWVudKlpbnRlbnNpdHnLP%2BAAAAAAAACFqGNoaWxkcmVukKN0YWewRGlyZWN0aW9uYWxMaWdodKNrZXmjc3VuqWludGVuc2l0eQGocG9zaXRpb26TAwMDhahjaGlsZHJlbpCjdGFnsVBlcnNwZWN0aXZlQ2FtZXJho2tlebJwZXJzcGVjdGl2ZS1jYW1lcmGrbWFrZURlZmF1bHTDqHBvc2l0aW9ukwADA4OoY2hpbGRyZW6Qo3RhZ61PcmJpdENvbnRyb2xzo2tleatvcmItY29udHJvbIOoY2hpbGRyZW6Qo3RhZ6RHcmlko2tleaRncmlk" width="100%" height="350px" frameBorder="0" />
+
+Vuer is built by researchers at MIT and UCSD in fields including robotics, computer vision, and computer graphics.
+
+- light-weight and performant
+- VR and AR ready
+- has a strong community support
+- Hackable and extensible
+- Open source, licensed under MIT
+
+<a id="using-vuer-with-claude-code" />
+
+## 🤖 Using Vuer with Claude Code
+
+Vuer includes a [Claude Code skill](https://github.com/vuer-ai/vuer-skill) that teaches Claude how to use the library effectively. To import, run in Claude Code:
+
+```
+/plugin marketplace add vuer-ai/vuer-skill
+/plugin install vuer@vuer-ai-vuer-skill
+```
+
+See the [full guide](/guides/claude_skill) for more details.
+
+To get a quick overview of what you can do with <code style={{"fontSize":"1.3em","backgroundClip":"text","color":"transparent","backgroundImage":"linear-gradient(to right, rgb(0,140,220), rgb(226,213,79), rgb(210,0,12))"}}>vuer</code>, check out the following:
+
+- take a look at the basic tutorial or the tutorial for robotics:
+  - [Introduction to Key Vuer Concepts](/tutorials/basics)
+- browse the example gallery [here](/examples/meshes/mesh_loading)
+- try the demo showing a Unitree Go1 robot in front of a staircase [here](/examples/urdf_go1_stairs)
+
+For more details:
+
+- A full list of visualization components: [API documentation on Components](/api/vuer).
+
+- A full list of data types: [API documentation on Data Types](/api/types).
+
+- [Quick Start](/quick_start)
+
+- [Report Issues](https://github.com/vuer-ai/vuer/issues?q=is:issue+is:closed)
+
+- [Constructing A Scene](/guides/first_3d_scene/01_constructing_a_scene)
+
+- [Materials & Textures](/guides/first_3d_scene/02_materials_and_textures)
+
+- [Camera Control](/guides/first_3d_scene/03_camera_control)
+
+- [Lights](/guides/first_3d_scene/04_lights)
+
+- [Render Modes](/guides/first_3d_scene/05_render_modes)
+
+- [Session API](/guides/session_apis)
+
+- [Static Files & Hot Loading](/guides/static_files)
+
+- [Python Client Connection](/guides/client_connection)
+
+- [Using Vuer with Claude Code](/guides/claude_skill)
+
+- [CLI Plugin System](/guides/cli)
+
+- [Client (vuer.client)](/api/client)
+
+- [Workspace (vuer.workspace)](/api/workspace)
+
+- [Components (vuer.schemas)](/api/schemas)
+
+- [Events (vuer.events)](/api/events)
+
+- [Real-Time Collab (vuer.rtc)](/rtc/README)
+
+- [Scene Generation (OpenAI Sora)](/examples/openai_sora)
+
+- [Gaussian Splatting](/components/splat)
+
+- [Gaussian Splatting (VR)](/components/splat)
+
+- [SplatMesh(sparkjs)](/components/spark_splats)
+
+- [basics](/tutorials/basics)
+
+- [robotics](/tutorials/teleoperation)
+
+- [README](/tutorials/camera/README)
+
+- [physics](/tutorials/physics)
+
+- [Detecting When Assets Have Been Loaded](/tutorials/obj_loading)
+
+- [MuJoCo Interactive Simulator](/tutorials/mujoco_interactive_simulator)
+
+- [Components](/components)
+
+- [Examples](/examples)
+
+- [Module (vuer)](/api/vuer)
+
+- [Types (vuer.types)](/api/types)
+
+- [Server Base (vuer.base)](/api/base)
+
+- [Coordinates (vuer.frame)](/api/frame)
+
+- [Serialization (vuer.serdes)](/api/serdes)

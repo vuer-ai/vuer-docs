@@ -28,3 +28,12 @@ for(const [before,after] of [[oldBrand,newBrand],[oldName,newName]]){
  if(!bar.includes(after)){assert.equal(bar.split(before).length-1,1,'Dockit brand structure changed; inspect before patching');bar=bar.replace(before,after)}
 }
 fs.writeFileSync(topbar,bar)
+// Authored latest pages are flat MDX files; API pages are generated from Python.
+const tocFile=fileURLToPath(new URL('../node_modules/@dreamlake/dockit/dist/components/TOC.js',import.meta.url))
+let toc=fs.readFileSync(tocFile,'utf8')
+const oldEdit='return `${siteConfig.docsRepoUrl}/edit/${siteConfig.docsBranch}/${pagesPath}/${slug}/+Page.mdx`;'
+const newEdit='if (pagesPath === "docs-site/content") {\n      if (currentPath === "/python-api" || currentPath.startsWith("/python-api/")) return null;\n      return `${siteConfig.docsRepoUrl}/edit/${siteConfig.docsBranch}/${pagesPath}/${slug}.mdx`;\n    }\n    '+oldEdit
+if(!toc.includes(newEdit)){
+ assert.equal(toc.split(oldEdit).length-1,1,'Dockit edit-link structure changed; inspect before patching')
+ toc=toc.replace(oldEdit,newEdit);fs.writeFileSync(tocFile,toc)
+}

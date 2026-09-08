@@ -3,16 +3,18 @@ import fs from 'node:fs'
 import path from 'node:path'
 import { execFileSync } from 'node:child_process'
 import MarkdownIt from 'markdown-it'
-const root=path.resolve(import.meta.dirname,'../..'), site=path.join(root,'docs-site'), source=fs.existsSync(path.join(root,'docs'))?path.join(root,'docs'):root, out=path.join(site,'pages'), pub=path.join(site,'public')
+import { htmlToMdx } from './html-to-mdx.mjs'
+const root=path.resolve(import.meta.dirname,'../..'), site=path.join(root,'docs-site'), source=fs.existsSync(path.join(root,'docs'))?path.join(root,'docs'):root, out=path.join(site,'content'), pub=path.join(site,'public')
 const md=new MarkdownIt({html:true,linkify:true})
 const walk=d=>fs.readdirSync(d,{withFileTypes:true}).flatMap(e=>e.isDirectory()&&!['.git','_build','node_modules','__pycache__'].includes(e.name)?walk(path.join(d,e.name)):e.isFile()?[path.join(d,e.name)]:[])
 const files=source===root?[path.join(root,'README.md'),...(fs.existsSync(path.join(root,'figures'))?walk(path.join(root,'figures')):[])]:walk(source), pages=files.filter(f=>/\.(md|rst)$/.test(f)&&!path.basename(f).startsWith('.')&&!f.includes('/assets/')&&!f.includes('/_static/'))
 const manifest=JSON.parse(fs.readFileSync(path.join(pub,'versions.json'),'utf8'))
-fs.rmSync(path.join(pub,'source'),{recursive:true,force:true})
+
 const releaseBranch=(process.env.BRANCH||'').match(/^docs\/v?(\d[^/]*)$/)
 const sourceVersion=fs.existsSync(path.join(root,'pyproject.toml'))?fs.readFileSync(path.join(root,'pyproject.toml'),'utf8').match(/^version\s*=\s*["']([^"']+)/m)?.[1]:null
 const version=releaseBranch?.[1] || sourceVersion || manifest.current
-fs.rmSync(out,{recursive:true,force:true}); fs.mkdirSync(out,{recursive:true})
+if(fs.existsSync(out) && !process.argv.includes('--overwrite')) throw new Error('MDX content already exists; use --overwrite only for an intentional re-import')
+fs.mkdirSync(out,{recursive:true})
 function url(rel){return '/'+rel.replace(/\.(md|rst)$/,'').replace(/(^|\/)index$/,'').replace(/\/$/,'')}
 function resolveLink(href,rel){
  if(href.startsWith('https://docs.vuer.ai/en/latest/')) href='/'+href.split('/en/latest/')[1].replace(/\.html(?=$|#)/,'')
@@ -63,25 +65,9 @@ for(const f of pages){
  const section=rel==='index.md'||rel==='quick_start.md'?'Getting Started':({'guides':'Guides','tutorials':'Tutorials','components':'Components','examples':'Examples','api':'Python API','rtc':'Python API'}[rel.split('/')[0]]||'Reference')
  let html=md.render(text).replace(/\b(href|src)="([^"]+)"/g,(_,attr,h)=>`${attr}="${resolveLink(h,rel)}"`)
  html=html.replace(/<h([1-6])>(.*?)<\/h\1>/g,(_,level,content)=>`<h${level} id="${content.replace(/<[^>]+>/g,'').toLowerCase().replace(/[^\w\s-]/g,'').trim().replace(/\s+/g,'-')}">${content}</h${level}>`)
- const dest=path.join(out,rel.replace(/\.(md|rst)$/,''));fs.mkdirSync(dest,{recursive:true})
- fs.writeFileSync(path.join(dest,'content.html'),html)
- fs.writeFileSync(path.join(dest,'content.txt'),text)
- fs.writeFileSync(path.join(dest,'+Page.mdx'),`---\ntitle: ${JSON.stringify(title)}\nsection: ${JSON.stringify(section)}\norder: ${rel==='index.md'?0:rel==='quick_start.md'?1:++count+10}\ndescription: ${JSON.stringify(title+' — Vuer documentation')}\n---\n\nimport html from './content.html?raw'\n\n<div className="legacy-doc" dangerouslySetInnerHTML={{ __html: html }} />\n`)
+ const dest=path.join(out,rel.replace(/\.(md|rst)$/,'.mdx'));fs.mkdirSync(path.dirname(dest),{recursive:true})
+ fs.writeFileSync(dest,`---\ntitle: ${JSON.stringify(title)}\nsection: ${JSON.stringify(section)}\norder: ${rel==='index.md'?0:rel==='quick_start.md'?1:++count+10}\ndescription: ${JSON.stringify(title+' — Vuer documentation')}\n---\n\n${htmlToMdx(html)}`)
  const route=url(rel)||'/';redirects.push(`/en/latest/${rel.replace(/\.(md|rst)$/,'.html')} ${route} 301`,`/en/stable/${rel.replace(/\.(md|rst)$/,'.html')} ${route} 301`)
  fs.mkdirSync(path.dirname(path.join(pub,'markdown',rel)),{recursive:true});fs.writeFileSync(path.join(pub,'markdown',rel),text)
 }
-// Keep every source asset at its original relative location under /source/.
-for(const f of files.filter(f=>!f.endsWith('.md')&&!f.includes('/_templates/'))){const dest=path.join(pub,'source',path.relative(source,f));fs.mkdirSync(path.dirname(dest),{recursive:true});fs.copyFileSync(f,dest)}
-// Send legacy release URLs through that snapshot's own source-specific route map.
-// Direct browser fallback keeps Read the Docs independent of proxy challenges.
-for (const release of manifest.versions) {
- const tag=release.branch?.replace(/^docs\//,'')
- if(tag && !['latest','stable'].includes(tag)) redirects.push(`/en/${tag}/* ${release.url}/en/latest/:splat 302`)
-}
-fs.writeFileSync(path.join(pub,'_redirects'),redirects.join('\n')+'\n/en/latest/ / 301\n/en/stable/ / 301\n/en/* https://vuer-py.readthedocs.io/en/:splat 302\n')
-fs.writeFileSync(path.join(pub,'llms.txt'),'# Vuer\n\n> Event-driven visualization for physical AI, robotics, VR and AR.\n\n'+pages.map(f=>{const r=path.relative(source,f);return `- [${r}](https://docs.vuer.ai/markdown/${r})`}).join('\n')+'\n')
-const py=['src/vuer','vuer','tassa','nerf_vuer'].find(p=>fs.existsSync(path.join(root,p,'__init__.py')))
-if(py)
-execFileSync(process.env.PYTHON||'python3',['-m','autodoc_py',path.join(root,py),'--output',path.join(out,'python-api'),'--module',path.basename(py),'--url-prefix','/python-api','--section','Python API','--source-url',`https://github.com/vuer-ai/vuer-docs/blob/${process.env.BRANCH||'main'}/${py}`],{stdio:'inherit'})
-for(const f of walk(out).filter(f=>f.endsWith('+Page.mdx'))){const rel=path.relative(out,path.dirname(f));const markdown=fs.existsSync(path.join(path.dirname(f),'content.txt'))?fs.readFileSync(path.join(path.dirname(f),'content.txt'),'utf8'):fs.readFileSync(f,'utf8');const dest=path.join(pub,(rel==='index'?'index':rel)+'.md');fs.mkdirSync(path.dirname(dest),{recursive:true});fs.writeFileSync(dest,markdown)}
-console.log(`Converted ${pages.length} authored pages, preserved source assets, and generated Python API.`)
+console.log(`Imported ${pages.length} authored pages as editable MDX.`)
