@@ -1,0 +1,25 @@
+{
+  "preservedBefore": "2026-09-08 navigation update",
+  "builds": [
+    {
+      "version": "0.1.6",
+      "url": "https://6a9f17ea60adb4c823aba0f2--vuer-docs.netlify.app",
+      "branch": "docs/v0.1.6",
+      "commit": "4e2c706f8ec8d8c5e07e55fa83f832c29fc73b73",
+      "upstreamCommit": "b2bd7a261b0711ca739756b7abccfc871b688be3"
+    },
+    {
+      "version": "latest",
+      "url": "https://6a9f175ca8f140729db3b09a--vuer-docs.netlify.app",
+      "branch": "docs/latest",
+      "commit": "0f8fc9443527d3e2807a8081f617f68e3f267786",
+      "upstreamCommit": "b2bd7a261b0711ca739756b7abccfc871b688be3"
+    },
+    {
+      "version": "main before navigation update",
+      "branch": "main",
+      "commit": "27d3dab7d08fb5a2da6daaab35d5f2bc90909962",
+      "url": "https://6a9fa76155790b0008bb3fac--vuer-docs.netlify.app"
+    }
+  ]
+}

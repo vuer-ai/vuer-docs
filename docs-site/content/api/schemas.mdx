@@ -1,0 +1,41 @@
+---
+title: "Component Library vuer.schemas"
+section: "Python API"
+order: 17
+description: "Component Library vuer.schemas — Vuer documentation"
+---
+
+Component Library\
+`vuer.schemas`
+==============
+
+`vuer.schema` contains the schemas for the various components of the Vuer system. These schemas are used to validate the data that is passed to the various components of the system.
+
+For detailed view of how these components are implemented, please refer to the typescript source code at [https://docs.vuer.ai/en/latest/api/schemas.html](/api/schemas).
+
+**Example Usage:**
+
+```python
+from vuer import Vuer
+from vuer.schemas import DefaultScene, Sphere
+
+vuer = Vuer()
+vuer.set @ DefaultScene(up=[0, 1, 0])
+vuer.upsert @ Sphere(args=[0.1, 20, 20], position=[0, 0.1, 0], key="sphere")
+```
+
+## HTML Components
+
+[vuer.schemas.html\_components API reference](/python-api/schemas/html_components)
+
+## 3D Scene Components
+
+[vuer.schemas.scene\_components API reference](/python-api/schemas/scene_components)
+
+## Drei Components
+
+[vuer.schemas.drei\_components API reference](/python-api/schemas/drei_components)
+
+## Physics Components
+
+[vuer.schemas.physics\_components API reference](/python-api/schemas/physics_components)

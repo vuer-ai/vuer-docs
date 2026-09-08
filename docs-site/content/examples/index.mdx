@@ -1,0 +1,154 @@
+---
+title: "Examples"
+section: "Examples"
+order: 69
+description: "Examples — Vuer documentation"
+---
+
+import { Catalog } from "@docs/components/Catalog"
+
+# Examples
+
+Find a working example by topic, component, or technique.
+
+<Catalog label="Examples" categories={["Scenes & Meshes", "Point Clouds & RGB-D", "Gaussian Splats", "Cameras", "VR & XR"]} entries={[
+  {
+    "title": "Mesh Loading",
+    "href": "/examples/meshes/mesh_loading",
+    "category": "Scenes & Meshes",
+    "description": "Compare URL, binary buffer, text, and array-based mesh loading."
+  },
+  {
+    "title": "Textured Trimesh",
+    "href": "/examples/meshes/textured_trimesh",
+    "category": "Scenes & Meshes",
+    "description": "Apply image textures to meshes using UV coordinates."
+  },
+  {
+    "title": "Unitree Go1 & Stairs",
+    "href": "/examples/urdf_go1_stairs",
+    "category": "Scenes & Meshes",
+    "description": "Combine a robot, stair mesh, fog, and movable lights."
+  },
+  {
+    "title": "Text & Billboards",
+    "href": "/examples/visualization/3d_text",
+    "category": "Scenes & Meshes",
+    "description": "Compare 3D text, flat labels, and camera-facing billboards."
+  },
+  {
+    "title": "360\u00b0 Panorama",
+    "href": "/examples/background/sky_ball",
+    "category": "Scenes & Meshes",
+    "description": "Map an equirectangular image onto the inside of a sphere."
+  },
+  {
+    "title": "Point Cloud Streaming",
+    "href": "/examples/point_clouds/pointcloud",
+    "category": "Point Clouds & RGB-D",
+    "description": "Load PLY files or send point positions and colors over WebSocket."
+  },
+  {
+    "title": "Point Cloud Animation",
+    "href": "/examples/point_clouds/animation",
+    "category": "Point Clouds & RGB-D",
+    "description": "Animate point clouds with timeline events and broadcast updates."
+  },
+  {
+    "title": "Per-session Point Cloud Animation",
+    "href": "/examples/point_clouds/animation_upsert",
+    "category": "Point Clouds & RGB-D",
+    "description": "Use timeline events and upsert to update a specific session."
+  },
+  {
+    "title": "Depth to Point Cloud",
+    "href": "/examples/point_clouds/depth_pointcloud",
+    "category": "Point Clouds & RGB-D",
+    "description": "Generate a point cloud directly from a depth image."
+  },
+  {
+    "title": "RGB-D Visualization",
+    "href": "/examples/background/depth_image",
+    "category": "Point Clouds & RGB-D",
+    "description": "Render color and depth image pairs with ImageBackground."
+  },
+  {
+    "title": "Depth Texture",
+    "href": "/examples/visualization/depth_texture",
+    "category": "Point Clouds & RGB-D",
+    "description": "Visualize a depth texture on a deformable image plane."
+  },
+  {
+    "title": "Interactive Pointer & Marker",
+    "href": "/examples/pointer",
+    "category": "Point Clouds & RGB-D",
+    "description": "Handle clicks on a point cloud to place 3D markers."
+  },
+  {
+    "title": "3DGS from Sora Videos",
+    "href": "/examples/openai_sora",
+    "category": "Gaussian Splats",
+    "description": "Explore four reconstructed Gaussian splat scenes from generated videos."
+  },
+  {
+    "title": "Camera Trajectories",
+    "href": "/examples/spline_frustum",
+    "category": "Cameras",
+    "description": "Animate a camera frustum along a spline of recorded positions."
+  },
+  {
+    "title": "WebXR Mesh Detection",
+    "href": "/examples/26_webxr_mesh",
+    "category": "VR & XR",
+    "description": "Detect environmental surfaces in AR and receive mesh updates."
+  },
+  {
+    "title": "Heads-up Display",
+    "href": "/examples/background/vr_hud",
+    "category": "VR & XR",
+    "description": "Display a video HUD in VR for camera-based teleoperation."
+  },
+  {
+    "title": "Body Tracking",
+    "href": "/examples/vr_xr/body_tracking",
+    "category": "VR & XR",
+    "description": "Stream full-body joint poses using the WebXR Body Tracking API."
+  },
+  {
+    "title": "Hand Tracking",
+    "href": "/examples/vr_xr/hand_tracking",
+    "category": "VR & XR",
+    "description": "Stream hand poses from an XR headset to Python."
+  },
+  {
+    "title": "Motion Controllers",
+    "href": "/examples/vr_xr/motion_controllers",
+    "category": "VR & XR",
+    "description": "Read Quest 3 controller poses, buttons, and trackpad states."
+  }
+]} />
+
+## Topic overviews
+
+Interactive examples demonstrating Vuer's capabilities.
+
+## VR/XR
+
+- [Hand Tracking](/examples/vr_xr/hand_tracking)
+- [Controller Tracking](/examples/vr_xr/motion_controllers)
+- [Body Tracking](/examples/vr_xr/body_tracking)
+
+## 3D Assets
+
+- [meshes](/examples/meshes)
+- [point clouds](/examples/point_clouds)
+- [urdf go1 stairs](/examples/urdf_go1_stairs)
+- [spline frustum](/examples/spline_frustum)
+
+## Visualization
+
+- [3DGS from Sora](/examples/openai_sora)
+- [3D Text & Billboard](/examples/visualization/3d_text)
+- [Depth Texture](/examples/visualization/depth_texture)
+- [background environment](/examples/background_environment)
+- [pointer](/examples/pointer)
