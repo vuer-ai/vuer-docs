@@ -95,3 +95,9 @@ nav=fs.readFileSync(navFile,'utf8');
 const oldNormalize='return clean.replace(/\\/+$/, "") || "/";';
 const newNormalize='const normalized = clean.replace(/\\/+$/, "") || "/";\n  return pages.find((page) => page.path.toLowerCase() === normalized.toLowerCase())?.path || normalized;';
 if(!nav.includes(newNormalize)){assert.equal(nav.split(oldNormalize).length-1,1,'Inspect Dockit case normalization before upgrading');fs.writeFileSync(navFile,nav.replace(oldNormalize,newNormalize));}
+// Top-level tabs must work while hydration/client-router startup is in progress.
+const stripFile=fileURLToPath(new URL('../node_modules/@dreamlake/dockit/dist/components/TabStrip.js',import.meta.url));
+let strip=fs.readFileSync(stripFile,'utf8');
+const oldTabHref='href: external ? tab.href : tab.landing,';
+const newTabHref='href: external ? tab.href : tab.landing,\n                  "data-vike": "false",';
+if(!strip.includes(newTabHref)){assert.equal(strip.split(oldTabHref).length-1,1,'Inspect Dockit top-level links before upgrading');fs.writeFileSync(stripFile,strip.replace(oldTabHref,newTabHref));}
