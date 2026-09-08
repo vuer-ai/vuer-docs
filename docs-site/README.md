@@ -54,3 +54,14 @@ Netlify site `vuer-docs` (`67b4e1fc-ebed-4f93-8c1a-8491bddc7bd5`) builds `main` 
 Production can roll back to a prior Netlify deployment. To roll back the domain instead, replace only the managed `docs.vuer.ai` DNS records with the previous `CNAME readthedocs.io` (TTL 3600). Leave other zone records unchanged. Keep the Read the Docs project and custom-domain entry 15530 intact; its Canonical setting was disabled to retain the independent default hostname.
 
 The pinned Dockit compatibility patch preserves the selected branch version after manifest hydration and separates the version menu from the home link. Installation and builds verify the exact expected upstream structure before applying the patch.
+
+## Release entries
+
+Author individual release notes in `content/releases/<version>.mdx`, newest first
+in `navigation/structure.mjs` and the `content/releases/index.mdx` overview.
+Keep upcoming changes in `content/releases/unreleased.mdx` until a release is
+confirmed. Do not infer release notes for versions that lack authored notes.
+
+`RELEASE_NOTES.mdx` preserves the combined historical page and its original
+anchors for bookmarks; it is hidden from navigation and search. Older commit-style
+notes remain in `CHANGE_LOG.mdx`, and `versions.mdx` links to preserved docs builds.

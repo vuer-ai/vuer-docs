@@ -88,7 +88,7 @@ for(const [before,after] of [[oldRoot,newRoot],[oldPath,newPath]]){
 fs.writeFileSync(navFile,nav);
 toc=fs.readFileSync(tocFile,'utf8');
 const oldSlug='const slug = currentPath === "/" ? "index" : currentPath.replace(/^\\//, "");';
-const newSlug='const slug = currentPath === "/" ? "index" : ["/components", "/examples"].includes(currentPath) ? currentPath.slice(1) + "/index" : currentPath.replace(/^\\//, "");';
+const newSlug='const slug = currentPath === "/" ? "index" : ["/components", "/examples", "/releases"].includes(currentPath) ? currentPath.slice(1) + "/index" : currentPath.replace(/^\\//, "");';
 if(!toc.includes(newSlug)){assert.equal(toc.split(oldSlug).length-1,1,'Inspect Dockit catalog edit links before upgrading');fs.writeFileSync(tocFile,toc.replace(oldSlug,newSlug));}
 // Netlify pretty URLs lowercase filenames; resolve their authored metadata too.
 nav=fs.readFileSync(navFile,'utf8');

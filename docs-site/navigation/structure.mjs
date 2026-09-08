@@ -5,7 +5,7 @@ export const tabs = [
  {id:'components',label:'Components',numeral:'II',landing:'/components',urlPrefix:'/components'},
  {id:'examples',label:'Examples',numeral:'III',landing:'/examples',urlPrefix:'/examples'},
  {id:'python-api',label:'Python API',numeral:'IV',landing:'/python-api',urlPrefix:'/python-api'},
- {id:'releases',label:'Releases',numeral:'V',landing:'/RELEASE_NOTES',urlPrefix:'/releases'},
+ {id:'releases',label:'Releases',numeral:'V',landing:'/releases',urlPrefix:'/releases'},
 ];
 const groups = {
  'Getting Started': ['index','quick_start','tutorials/basics','guides/first_3d_scene/01_constructing_a_scene'],
@@ -23,7 +23,7 @@ const groups = {
  'Point Clouds & RGB-D': ['pointer','background/depth_image','point_clouds/pointcloud','point_clouds/animation','point_clouds/animation_upsert','point_clouds/depth_pointcloud','visualization/depth_texture'].map(x=>'examples/'+x),
  'Gaussian Splats':['examples/openai_sora'],
  'VR & XR':['examples/background/vr_hud','examples/26_webxr_mesh','examples/vr_xr/body_tracking','examples/vr_xr/hand_tracking','examples/vr_xr/motion_controllers'],
- 'Releases':['RELEASE_NOTES','CHANGE_LOG','versions'],
+ 'Releases':['releases/index','releases/unreleased','releases/v0.1.5','releases/v0.0.80rc4','releases/v0.0.80rc2','releases/v0.0.80rc1','CHANGE_LOG','versions'],
 };
 const titles = {
  index:'Overview',quick_start:'Getting Started','tutorials/basics':'Key Concepts',
@@ -43,6 +43,7 @@ const titles = {
 export function navigationFor(slug) {
  slug=slug.replace(/\.mdx$/,'');
  const result={};
+ if(slug==='RELEASE_NOTES') return {section:'Releases',hidden:true,noindex:true};
  if(titles[slug]) result.title=titles[slug];
  for(const [section,items] of Object.entries(groups)) {
   const i=items.indexOf(slug);
