@@ -10,7 +10,7 @@
       "version": "0.1.6",
       "url": "https://docs-v0-1-6--vuer-docs.netlify.app",
       "branch": "docs/v0.1.6",
-      "commit": "120836bcc648d183618ab92d064aefd585e3ac25",
+      "commit": "992be1ba319ec0625cd2c779917adf46bd72195e",
       "upstreamCommit": "b2bd7a261b0711ca739756b7abccfc871b688be3"
     },
     {
@@ -1032,7 +1032,7 @@
       "version": "latest",
       "url": "https://docs-latest--vuer-docs.netlify.app",
       "branch": "docs/latest",
-      "commit": "e6c46210ff9cd178a3afe03eb48411f67c584790",
+      "commit": "70e6f16e0a7909a5ded288bfc09d9bdebc7a78d2",
       "upstreamCommit": "b2bd7a261b0711ca739756b7abccfc871b688be3"
     },
     {
