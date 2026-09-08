@@ -1,3 +1,4 @@
+import { ToggleButton, ToggleButtons } from '@dreamlake/uikit'
 import React, {Children, isValidElement, useId, useState, useRef, useEffect, type HTMLAttributes, type IframeHTMLAttributes, type ImgHTMLAttributes, type VideoHTMLAttributes, type ReactNode} from 'react'
 
 export function SceneEmbed({title='Interactive Vuer scene',loading='lazy',className='',style,...props}:IframeHTMLAttributes<HTMLIFrameElement>){
@@ -25,8 +26,8 @@ export function ButtonGroup({label='Options',children}: {label?:string;children:
  },[])
 
  return <div ref={root} className="doc-button-options">
-  <div role="group" aria-label={label} className="doc-button-group">
-   {tabs.map((tab,index)=><button key={index} type="button" id={`${id}-tab-${index}`} aria-pressed={index===active} aria-controls={tab.props.id||`${id}-panel-${index}`} tabIndex={index===active?0:-1} onClick={()=>setActive(index)} onKeyDown={event=>{
+  <ToggleButtons role="group" aria-label={label} className="doc-button-group" variant="secondary" size="sm" padding={false} value={String(active)} onValueChange={value=>setActive(Number(value))}>
+   {tabs.map((tab,index)=><ToggleButton key={index} value={String(index)} id={`${id}-tab-${index}`} aria-pressed={index===active} aria-controls={tab.props.id||`${id}-panel-${index}`} tabIndex={index===active?0:-1} onKeyDown={event=>{
     let next=index
     if(event.key==='ArrowRight')next=(index+1)%tabs.length
     else if(event.key==='ArrowLeft')next=(index+tabs.length-1)%tabs.length
@@ -35,8 +36,8 @@ export function ButtonGroup({label='Options',children}: {label?:string;children:
     else return
     event.preventDefault();setActive(next)
     const buttons=event.currentTarget.parentElement?.querySelectorAll<HTMLButtonElement>('button');buttons?.[next]?.focus()
-   }}>{tab.props.label}</button>)}
-  </div>
+   }}>{tab.props.label}</ToggleButton>)}
+  </ToggleButtons>
   {tabs.map((tab,index)=><section key={index} data-button-panel role="region" id={tab.props.id||`${id}-panel-${index}`} aria-labelledby={`${id}-tab-${index}`} tabIndex={0} hidden={index!==active}>{tab.props.children}</section>)}
  </div>
 }
