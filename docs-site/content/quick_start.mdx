@@ -1,0 +1,117 @@
+---
+title: "Getting Started"
+section: "Getting Started"
+order: 1
+description: "Getting Started — Vuer documentation"
+---
+
+import { Callout, Tabs, Tab } from '@docs/components/Docs'
+
+# Getting Started
+
+To get a quick overview of what you can do with `vuer`, check out the following:
+
+- take a look at the basic tutorial or the tutorial for robotics: [Vuer Basics](/tutorials/basics)
+- or try to take a look at the example gallery [here](/examples/meshes/mesh_loading)
+
+<Tabs label="Installation environment">
+<Tab label="Python">
+
+You can install `vuer` with `pip`:
+
+```shell
+pip install -U 'vuer==0.1.6'
+```
+
+</Tab>
+<Tab label="Browser (PyScript)" id="running-vuer-from-the-browser">
+
+Vuer can run directly in the web browser via PyScript and Pyodide. Server dependencies (`websockets`, `aiohttp`) are auto-excluded on Emscripten:
+
+```python
+import micropip
+await micropip.install("vuer")
+
+from vuer.schemas import Scene, Box, Urdf
+```
+
+</Tab>
+</Tabs>
+
+Now you should be able to run scripts show in the examples, and look at the results on [vuer.ai](https://vuer.ai).
+
+To view the scene in VR or AR headsets, you need to install `ngrok` (see [setting up ngrok](https://ngrok.com)) to promote the websocket to `wss`.
+
+<Callout>
+  **Using ngrok to promote to `wss://`**
+
+  You need to install `ngrok` to promote the local vuer server from ws\://localhost:8012 to wss\://xxxx.ngrok.io, (note the double w\[ss] in the protocol), and pass it as a query parameter that looks like this:
+
+  ```
+    https://vuer.ai?ws=wss://xxxxx.ngrok.io
+  ```
+
+  Note the repeated `ws` and then `wss://` in the query string.
+</Callout>
+
+## Running The Example Gallery
+
+To run the examples, you'll need to download the required assets:
+
+1. `git clone https://github.com/vuer-ai/vuer.git`
+2. Download `vuer_doc_assets` from [this Google Drive link](https://drive.google.com/file/d/1sx2-UckFTwEpXZwuSWSc4b2f8z0JAF1F/view?usp=sharing)
+3. Unzip the downloaded file
+4. Place the `vuer_doc_assets` folder alongside the project directory and rename it to `assets`.
+
+```
+parent_directory/
+├── vuer/                 # This project
+│   ├── docs/
+│   ├── vuer/
+│   └── README.md
+└── assets/      # Downloaded assets folder
+```
+
+5. Run the examples:
+
+```bash
+cd docs/examples/meshes
+python mesh_loading.py
+```
+
+*Note: you need to install a few optional dependencies such as `open3d` and `trimesh` for loading and processing point cloud and mesh data. The core vuer itself does not depend on these libraries.*
+
+<Callout>
+  **Open3D for Apple Sillicon (2024-03)**
+
+  The newest version of Open3D seems not compatible with Apple Silicon. If you are using M1, M2 or M3 macs, install the `open3d==0.15.1` or other patches of `0.15`.
+</Callout>
+
+## Developing Vuer (Optional)
+
+If you want to develop vuer, you can install it in editable mode plus dependencies relevant for building the documentations:
+
+**Using uv (recommended):**
+
+```shell
+cd vuer
+uv sync --group dev
+source .venv/bin/activate
+```
+
+**Using pip:**
+
+```shell
+cd vuer
+pip install -e '.[dev]'
+```
+
+To build the documentation:
+
+```shell
+make clean         # clean the cache from previous building
+make docs          # Build HTML documentation
+make preview       # Live preview with auto-reload
+```
+
+For more information on contributing, see [CONTRIBUTING.md](https://github.com/vuer-ai/vuer/blob/main/CONTRIBUTING.md).

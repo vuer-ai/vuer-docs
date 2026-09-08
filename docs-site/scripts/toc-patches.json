@@ -1,0 +1,58 @@
+[
+  [
+    "const tocLevel = current?.tocLevel ?? 3;",
+    "const tocLevel = current?.tocLevel ?? 6;"
+  ],
+  [
+    "const selector = tocLevel >= 3 ? \"[data-toc-anchor], h3[id]\" : \"[data-toc-anchor]\";",
+    "const selector = \"[data-toc-anchor], h2[id], h3[id], h4[id], h5[id], h6[id]\";"
+  ],
+  [
+    "nodes.map((el) => {",
+    "outlineHeadings(nodes.map((el) => {"
+  ],
+  [
+    "level: isAnchor ? 2 : 3,",
+    "level: isAnchor ? Number(el.dataset.tocLevel || 2) : Number(el.tagName.slice(1)),"
+  ],
+  [
+    "        })\n      );\n    }\n    collect();",
+    "        }).filter((h) => h.level <= tocLevel))\n      );\n    }\n    collect();"
+  ],
+  [
+    "  const h2HasChildren = useMemo(() => {\n    const set = /* @__PURE__ */ new Set();\n    let lastH2 = null;\n    for (const h of headings) {\n      if (h.level === 2) lastH2 = h.id;\n      else if (lastH2) set.add(lastH2);\n    }\n    return set;\n  }, [headings]);\n  const visibleHeadings = useMemo(() => {\n    const result = [];\n    let lastH2Id = null;\n    for (const h of headings) {\n      if (h.level === 2) {\n        lastH2Id = h.id;\n        result.push(h);\n      } else if (lastH2Id && !collapsedH2s.has(lastH2Id)) {\n        result.push(h);\n      }\n    }\n    return result;\n  }, [headings, collapsedH2s]);\n",
+    "  const h2HasChildren = useMemo(() => new Set(headings.flatMap((h) => h.ancestors)), [headings]);\n  const visibleHeadings = useMemo(() => visibleOutline(headings, collapsedH2s), [headings, collapsedH2s]);\n"
+  ],
+  [
+    "const indent = li.dataset.level === \"3\" ? X_INDENT_H3 : 0;",
+    "const indent = Number(li.dataset.depth || 0) * X_INDENT_H3;"
+  ],
+  [
+    "if (h.level === 2) parentH2Id = h.id;",
+    "if (h.depth === 0) parentH2Id = h.id;"
+  ],
+  [
+    "        if (h && h.level === 3) {\n          let parentH2 = null;\n          for (const hh of headings) {\n            if (hh.level === 2) parentH2 = hh.id;\n            if (hh.id === id) break;\n          }\n          if (parentH2 && collapsedH2s.has(parentH2)) {\n            setCollapsedH2s((prev) => {\n              const next = new Set(prev);\n              next.delete(parentH2);\n              localStorage.setItem(TOC_KEY_PREFIX + urlPathname, JSON.stringify([...next]));\n              return next;\n            });\n            setFoldVersion((v) => v + 1);\n          }\n        }\n      }\n",
+    "        if (h && h.ancestors.some((id) => collapsedH2s.has(id))) {\n          setCollapsedH2s((prev) => {\n            const next = new Set(prev);\n            for (const ancestor of h.ancestors) next.delete(ancestor);\n            localStorage.setItem(TOC_KEY_PREFIX + urlPathname, JSON.stringify([...next]));\n            return next;\n          });\n          setFoldVersion((v) => v + 1);\n        }\n      }\n"
+  ],
+  [
+    "const isH3 = ah && ah.level === 3;",
+    "const isH3 = ah && ah.depth > 0;"
+  ],
+  [
+    "    if (activeH && activeH.level === 3) {\n      for (const h of visibleHeadings) {\n        if (h.level === 2) anchorId = h.id;\n        if (h.id === id) break;\n      }\n    } else {\n      let prev = null;\n      for (const h of visibleHeadings) {\n        if (h.id === id) break;\n        if (h.level === 2) prev = h.id;\n      }\n      anchorId = prev;\n    }\n",
+    "    if (activeH && activeH.depth > 0) {\n      anchorId = activeH.ancestors[0];\n    } else {\n      for (const h of visibleHeadings) {\n        if (h.id === id) break;\n        if (h.depth === 0) anchorId = h.id;\n      }\n    }\n"
+  ],
+  [
+    "const hasFold = h.level === 2 && h2HasChildren.has(h.id);",
+    "const hasFold = h2HasChildren.has(h.id);"
+  ],
+  [
+    "style: h.level === 3 ? { paddingLeft: 12 } : void 0,",
+    "\"data-depth\": h.depth,\n                    style: h.depth ? { paddingLeft: 12 * h.depth } : void 0,"
+  ],
+  [
+    "className: \"toc-link\",",
+    "\"data-depth\": h.depth,\n                        className: \"toc-link\","
+  ]
+]
