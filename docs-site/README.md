@@ -14,28 +14,28 @@ npm run preview
 
 Edit `content/**/*.mdx` directly. `npm run build` copies these sources to disposable Vike pages, generates the Python API, prerenders HTML, and builds Pagefind search. HTML is a deployment output; authored pages no longer import HTML strings or use `dangerouslySetInnerHTML`. Code fences, tables, lists and headings are native MDX. Markdown downloads and `/llms.txt` are published alongside the site.
 
-`SceneEmbed`, `DocImage`, `DocVideo`, `Callout` and `DocHero` are reusable React components. `Tabs` and `Tab` group genuine alternatives, such as Python versus browser installation on the homepage and Getting Started page. Tabs support arrow keys, Home/End, ARIA relationships, and links to headings inside an inactive panel. Sequential instructions remain outside tabs.
+`SceneEmbed`, `DocImage`, `DocVideo`, `Callout` and `DocHero` are reusable React components. `ButtonGroup` and `ButtonOption` present compact, segmented choices, such as Python versus browser installation on the homepage and Getting Started page. Button groups support arrow keys, Home/End, ARIA relationships, and links to headings inside an inactive panel. Sequential instructions remain outside the group. The older `Tabs`/`Tab` names remain compatibility aliases.
 
 ```mdx
-import { Tabs, Tab } from '@docs/components/Docs'
+import { ButtonGroup, ButtonOption } from '@docs/components/Docs'
 
-<Tabs label="Environment">
-<Tab label="Python">
+<ButtonGroup label="Environment">
+<ButtonOption label="Python">
 
 Python instructions here.
 
-</Tab>
-<Tab label="Browser">
+</ButtonOption>
+<ButtonOption label="Browser">
 
 Browser instructions here.
 
-</Tab>
-</Tabs>
+</ButtonOption>
+</ButtonGroup>
 ```
 
 ## Legacy import
 
-`scripts/import-legacy.mjs` is a one-time import tool, not part of normal builds. It handles the original MyST/RST sources and converts their rendered structure into native MDX with `scripts/html-to-mdx.mjs`. The importer refuses to overwrite existing content unless explicitly invoked with `--overwrite`; doing so replaces editorial MDX changes, including authored tabs. Preserve edits in Git before any deliberate re-import.
+`scripts/import-legacy.mjs` is a one-time import tool, not part of normal builds. It handles the original MyST/RST sources and converts their rendered structure into native MDX with `scripts/html-to-mdx.mjs`. The importer refuses to overwrite existing content unless explicitly invoked with `--overwrite`; doing so replaces editorial MDX changes, including authored button groups. Preserve edits in Git before any deliberate re-import.
 
 ## Historical snapshots
 
@@ -54,3 +54,28 @@ Netlify site `vuer-docs` (`67b4e1fc-ebed-4f93-8c1a-8491bddc7bd5`) builds `main` 
 Production can roll back to a prior Netlify deployment. To roll back the domain instead, replace only the managed `docs.vuer.ai` DNS records with the previous `CNAME readthedocs.io` (TTL 3600). Leave other zone records unchanged. Keep the Read the Docs project and custom-domain entry 15530 intact; its Canonical setting was disabled to retain the independent default hostname.
 
 The pinned Dockit compatibility patch preserves the selected branch version after manifest hydration and separates the version menu from the home link. Installation and builds verify the exact expected upstream structure before applying the patch.
+
+## Release entries
+
+Author individual release notes in `content/releases/<version>.mdx`, newest first
+in `navigation/structure.mjs` and the `content/releases/index.mdx` overview.
+Keep upcoming changes in `content/releases/unreleased.mdx` until a release is
+confirmed. Do not infer release notes for versions that lack authored notes.
+
+`RELEASE_NOTES.mdx` preserves the combined historical page and its original
+anchors for bookmarks; it is hidden from navigation and search. Older commit-style
+notes remain in `CHANGE_LOG.mdx`, and `versions.mdx` links to preserved docs builds.
+
+## Sidebar widths
+
+Dockit defaults both desktop sidebars to 280px. Override them independently in
+`styles/app.css`:
+
+```css
+:root {
+  --doc-sidebar-width: 300px;
+  --doc-toc-width: 300px;
+}
+```
+
+The left sidebar appears from 768px; the TOC appears from 1024px.

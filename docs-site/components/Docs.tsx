@@ -6,8 +6,8 @@ export function SceneEmbed({title='Interactive Vuer scene',loading='lazy',classN
 export function DocImage({alt='',loading='lazy',...props}:ImgHTMLAttributes<HTMLImageElement>){return <img {...props} alt={alt} loading={loading} className={`doc-image ${props.className||''}`} />}
 export function DocVideo(props:VideoHTMLAttributes<HTMLVideoElement>){return <video controls {...props} className={`doc-video ${props.className||''}`} />}
 export function Callout({children,...props}:HTMLAttributes<HTMLElement>){return <aside {...props} className={`doc-callout ${props.className||''}`}>{children}</aside>}
-export function Tab({children}: {label:string;id?:string;children:ReactNode}){return <>{children}</>}
-export function Tabs({label='Options',children}: {label?:string;children:ReactNode}){
+export function ButtonOption({children}: {label:string;id?:string;children:ReactNode}){return <>{children}</>}
+export function ButtonGroup({label='Options',children}: {label?:string;children:ReactNode}){
  const tabs=Children.toArray(children).filter(isValidElement<{label:string;id?:string;children:ReactNode}>)
  const [active,setActive]=useState(0),id=useId(),root=useRef<HTMLDivElement>(null)
  useEffect(()=>{
@@ -16,7 +16,7 @@ export function Tabs({label='Options',children}: {label?:string;children:ReactNo
    try {hash=decodeURIComponent(window.location.hash.slice(1))} catch {return}
    const target=hash?document.getElementById(hash):null
    if(!target||!root.current?.contains(target))return
-   const panels=[...root.current.querySelectorAll('[role="tabpanel"]')]
+   const panels=[...root.current.querySelectorAll('[data-button-panel]')]
    const index=panels.findIndex(panel=>panel.contains(target))
    if(index>=0)setActive(index)
   }
@@ -24,9 +24,9 @@ export function Tabs({label='Options',children}: {label?:string;children:ReactNo
   return ()=>window.removeEventListener('hashchange',revealHash)
  },[])
 
- return <div ref={root} className="doc-tabs">
-  <div role="tablist" aria-label={label} className="doc-tab-list">
-   {tabs.map((tab,index)=><button key={index} type="button" role="tab" id={`${id}-tab-${index}`} aria-selected={index===active} aria-controls={tab.props.id||`${id}-panel-${index}`} tabIndex={index===active?0:-1} onClick={()=>setActive(index)} onKeyDown={event=>{
+ return <div ref={root} className="doc-button-options">
+  <div role="group" aria-label={label} className="doc-button-group">
+   {tabs.map((tab,index)=><button key={index} type="button" id={`${id}-tab-${index}`} aria-pressed={index===active} aria-controls={tab.props.id||`${id}-panel-${index}`} tabIndex={index===active?0:-1} onClick={()=>setActive(index)} onKeyDown={event=>{
     let next=index
     if(event.key==='ArrowRight')next=(index+1)%tabs.length
     else if(event.key==='ArrowLeft')next=(index+tabs.length-1)%tabs.length
@@ -34,11 +34,14 @@ export function Tabs({label='Options',children}: {label?:string;children:ReactNo
     else if(event.key==='End')next=tabs.length-1
     else return
     event.preventDefault();setActive(next)
-    const buttons=event.currentTarget.parentElement?.querySelectorAll<HTMLButtonElement>('[role="tab"]');buttons?.[next]?.focus()
+    const buttons=event.currentTarget.parentElement?.querySelectorAll<HTMLButtonElement>('button');buttons?.[next]?.focus()
    }}>{tab.props.label}</button>)}
   </div>
-  {tabs.map((tab,index)=><section key={index} role="tabpanel" id={tab.props.id||`${id}-panel-${index}`} aria-labelledby={`${id}-tab-${index}`} tabIndex={0} hidden={index!==active}>{tab.props.children}</section>)}
+  {tabs.map((tab,index)=><section key={index} data-button-panel role="region" id={tab.props.id||`${id}-panel-${index}`} aria-labelledby={`${id}-tab-${index}`} tabIndex={0} hidden={index!==active}>{tab.props.children}</section>)}
  </div>
 }
 
 export function DocHero(){return <h1 className="doc-hero"><code>vuer</code><span>An Event-Driven, Declarative Visualization Framework for Physical AI</span></h1>}
+
+// Compatibility for existing MDX consumers; inline choices share the button group.
+export { ButtonGroup as Tabs, ButtonOption as Tab }
