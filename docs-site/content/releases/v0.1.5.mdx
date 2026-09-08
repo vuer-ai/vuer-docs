@@ -1,0 +1,66 @@
+---
+title: "v0.1.5"
+section: "Releases"
+order: 0
+description: "v0.1.5 - ModelNode Base Class & Bvh Support"
+---
+
+# v0.1.5 - ModelNode Base Class & Bvh Support
+
+## New Features
+
+### ModelNode Base Class
+
+All 3D model loaders now inherit from a shared `ModelNode` base class, documenting the common props across all formats:
+
+```python
+from vuer.schemas import ModelNode, Glb, Urdf, Bvh
+
+# All model loaders share these props:
+# src, text, buff, assets, hide, onLoad, materialType, material,
+# color, opacity, wireframe, visible, castShadow, receiveShadow,
+# frustumCulled, renderOrder, position, rotation, quaternion, scale
+
+issubclass(Glb, ModelNode)   # True
+issubclass(Urdf, ModelNode)  # True
+issubclass(Bvh, ModelNode)   # True
+```
+
+### Bvh Component
+
+New `Bvh` component for loading BVH (Biovision Hierarchy) motion capture data:
+
+```python
+from vuer.schemas import Bvh
+
+# Load motion capture animation
+Bvh(
+    src="https://example.com/walk.bvh",
+    playAnimation=True,
+    animationSpeed=1.0,
+    boneRadius=0.02,
+    jointColor="#ff6600",
+    key="mocap",
+)
+
+# Or load from text
+Bvh(text=bvh_content, key="mocap-inline")
+```
+
+**Bvh Parameters:**
+
+- `src` / `text` — URL or inline BVH content
+- `playAnimation` — Auto-play animation (default: True)
+- `animationSpeed` — Playback speed multiplier
+- `boneRadius` — Bone cylinder radius
+- `jointColor` — Joint sphere color
+- `label` — Show joint name labels
+
+## Improvements
+
+- **Standardized Obj initialization** — `Obj` now uses the consistent kwargs pattern like all other model classes
+- **Improved docstrings** — `Fbx`, `Stl`, `Dae`, `Glb`, `CoordsMarker`, and `Arrow` have proper param/type notation and example usage blocks
+
+## Documentation
+
+- New [Bvh component](/components/bvh) reference with usage examples

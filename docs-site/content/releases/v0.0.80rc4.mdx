@@ -1,0 +1,50 @@
+---
+title: "v0.0.80rc4"
+section: "Releases"
+order: 1
+description: "v0.0.80rc4 - Dynamic Links & Scene Refactor"
+---
+
+# v0.0.80rc4 - Dynamic Links & Scene Refactor
+
+## Dynamic Link/Unlink
+
+Links can now be added and removed at runtime via `vuer.workspace`:
+
+```python
+from vuer import Vuer
+from vuer.workspace import jpg
+
+vuer = Vuer()
+
+@vuer.spawn(start=True)
+async def main(session):
+    # Add links dynamically
+    vuer.workspace.link(lambda: jpg(camera.frame), "/live/frame.jpg")
+    vuer.workspace.link(lambda: {"status": "recording"}, "/api/status")
+
+    # Access at /workspace/live/frame.jpg
+
+    await do_recording()
+
+    # Remove when done
+    vuer.workspace.unlink("/live/frame.jpg")
+
+    await session.forever()
+```
+
+## Scene Refactor
+
+- **`Scene`** is now minimal with empty `bgChildren` by default
+
+- **`DefaultScene`** includes rich defaults:
+
+  - Grid, HemisphereLightStage, Gamepad, Hands, MotionControllers
+  - SceneCamera (position `[0, 5, 10]`), SceneCameraControl
+  - CameraPreviewThumbs, CameraPreviewOverlay
+
+- Removed deprecated parameters: `defaultLights`, `defaultOrbitControls`, `show_helper`
+
+## Other Changes
+
+- Updated `params-proto` to 3.2.4
