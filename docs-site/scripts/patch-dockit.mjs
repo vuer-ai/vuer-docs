@@ -101,3 +101,17 @@ let strip=fs.readFileSync(stripFile,'utf8');
 const oldTabHref='href: external ? tab.href : tab.landing,';
 const newTabHref='href: external ? tab.href : tab.landing,\n                  "data-vike": "false",';
 if(!strip.includes(newTabHref)){assert.equal(strip.split(oldTabHref).length-1,1,'Inspect Dockit top-level links before upgrading');fs.writeFileSync(stripFile,strip.replace(oldTabHref,newTabHref));}
+
+// Backport the closed-search preview guard while Dockit's upstream fix is reviewed.
+const paletteFile=fileURLToPath(new URL('../node_modules/@dreamlake/dockit/dist/components/SearchPalette.js',import.meta.url));
+let palette=fs.readFileSync(paletteFile,'utf8');
+for(const [before,after] of [
+ ['if (!activePath || isSingleCol ||', 'if (!open || !activePath || isSingleCol ||'],
+ ['}, [active, activePath, isSingleCol]);', '}, [open, active, activePath, isSingleCol]);'],
+]) {
+ if(!palette.includes(after)) {
+  assert.equal(palette.split(before).length-1,1,'Inspect Dockit search preview before upgrading');
+  palette=palette.replace(before,after);
+ }
+}
+fs.writeFileSync(paletteFile,palette);
