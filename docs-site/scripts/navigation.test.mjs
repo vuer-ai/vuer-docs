@@ -42,3 +42,10 @@ test('directory catalog URLs keep their navigation metadata',()=>{
  initNavigation({'./pages/components/index/+Page.mdx':{frontmatter:{title:'Catalog'}}});
  assert.equal(getAdjacentPages('/components/').current.title,'Catalog');
 });
+test('Netlify lowercase URLs retain release and README navigation',()=>{
+ initNavigation({'./pages/RELEASE_NOTES/+Page.mdx':{frontmatter:{title:'Release Notes'}},'./pages/rtc/README/+Page.mdx':{frontmatter:{title:'RTC'}}});
+ assert.equal(tabForUrl('/release_notes/'),'releases');
+ assert.equal(tabForUrl('/change_log/'),'releases');
+ assert.equal(getAdjacentPages('/release_notes/').current.title,'Release Notes');
+ assert.equal(getAdjacentPages('/rtc/readme/').current.title,'RTC');
+});
