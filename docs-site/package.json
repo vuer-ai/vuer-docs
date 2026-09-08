@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "@dreamlake/dockit": "0.2.15",
+    "@dreamlake/uikit": "0.1.13",
     "@mdx-js/react": "^3.1.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
