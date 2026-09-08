@@ -65,3 +65,17 @@ confirmed. Do not infer release notes for versions that lack authored notes.
 `RELEASE_NOTES.mdx` preserves the combined historical page and its original
 anchors for bookmarks; it is hidden from navigation and search. Older commit-style
 notes remain in `CHANGE_LOG.mdx`, and `versions.mdx` links to preserved docs builds.
+
+## Sidebar widths
+
+Dockit defaults both desktop sidebars to 280px. Override them independently in
+`styles/app.css`:
+
+```css
+:root {
+  --doc-sidebar-width: 300px;
+  --doc-toc-width: 300px;
+}
+```
+
+The left sidebar appears from 768px; the TOC appears from 1024px.

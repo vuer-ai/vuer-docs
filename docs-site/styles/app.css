@@ -31,10 +31,3 @@
 }
 /* Long inline API names and release links must not widen a narrow page. */
 main.doc-content { overflow-wrap: anywhere; }
-
-/* Stable, narrow scrollbar space keeps section labels from reflowing on overflow. */
-.doc-sidebar { min-width: 0; scrollbar-width: thin; scrollbar-gutter: stable; }
-.doc-sidebar::-webkit-scrollbar { width: 6px; }
-.doc-sidebar::-webkit-scrollbar-thumb { background: var(--color-doc-template-faint-strong); border-radius: 3px; }
-.doc-sidebar .sidebar-section > span:first-child { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.doc-sidebar .sidebar-section > span:last-child { flex-shrink: 0; white-space: nowrap; }

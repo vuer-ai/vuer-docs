@@ -1,11 +1,11 @@
-// Dockit 0.2.14 assumes version subdomains; Netlify uses docs-vX--site.
+// Vuer compatibility patches for Dockit; Netlify uses docs-vX--site.
 // Preserve the explicit build version while still loading the shared manifest.
 import fs from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import assert from 'node:assert/strict'
-const filename=fileURLToPath(new URL('../node_modules/@dreamlake/dockit/dist/components/VersionBadge.js',import.meta.url))
-const before='} else if (manifest?.current) {'
-const after='} else if (manifest?.current && !version) {'
+const filename=fileURLToPath(new URL('../node_modules/@dreamlake/dockit/dist/lib/version-badge.js',import.meta.url))
+const before='return manifest?.current || version;'
+const after='return version || manifest?.current;'
 export function patch(source){
  if(source.includes(after))return source
  assert.equal(source.split(before).length-1,1,'Dockit version patch expected exactly one known fallback; inspect new framework before upgrading')
@@ -95,51 +95,3 @@ nav=fs.readFileSync(navFile,'utf8');
 const oldNormalize='return clean.replace(/\\/+$/, "") || "/";';
 const newNormalize='const normalized = clean.replace(/\\/+$/, "") || "/";\n  return pages.find((page) => page.path.toLowerCase() === normalized.toLowerCase())?.path || normalized;';
 if(!nav.includes(newNormalize)){assert.equal(nav.split(oldNormalize).length-1,1,'Inspect Dockit case normalization before upgrading');fs.writeFileSync(navFile,nav.replace(oldNormalize,newNormalize));}
-// Top-level tabs must work while hydration/client-router startup is in progress.
-const stripFile=fileURLToPath(new URL('../node_modules/@dreamlake/dockit/dist/components/TabStrip.js',import.meta.url));
-let strip=fs.readFileSync(stripFile,'utf8');
-const oldTabHref='href: external ? tab.href : tab.landing,';
-const newTabHref='href: external ? tab.href : tab.landing,\n                  "data-vike": "false",';
-if(!strip.includes(newTabHref)){assert.equal(strip.split(oldTabHref).length-1,1,'Inspect Dockit top-level links before upgrading');fs.writeFileSync(stripFile,strip.replace(oldTabHref,newTabHref));}
-
-// Backport the closed-search preview guard while Dockit's upstream fix is reviewed.
-const paletteFile=fileURLToPath(new URL('../node_modules/@dreamlake/dockit/dist/components/SearchPalette.js',import.meta.url));
-let palette=fs.readFileSync(paletteFile,'utf8');
-for(const [before,after] of [
- ['if (!activePath || isSingleCol ||', 'if (!open || !activePath || isSingleCol ||'],
- ['}, [active, activePath, isSingleCol]);', '}, [open, active, activePath, isSingleCol]);'],
-]) {
- if(!palette.includes(after)) {
-  assert.equal(palette.split(before).length-1,1,'Inspect Dockit search preview before upgrading');
-  palette=palette.replace(before,after);
- }
-}
-fs.writeFileSync(paletteFile,palette);
-
-// Backport the configurable 280px sidebar until the upstream release.
-const layoutFile=fileURLToPath(new URL('../node_modules/@dreamlake/dockit/dist/renderer/Layout.js',import.meta.url));
-let layout=fs.readFileSync(layoutFile,'utf8');
-for(const [before,after,count] of [
- ['md:grid-cols-[240px_minmax(0,1fr)]','md:grid-cols-[var(--doc-sidebar-width,280px)_minmax(0,1fr)]',2],
- ['lg:grid-cols-[240px_minmax(0,1fr)_240px]','lg:grid-cols-[var(--doc-sidebar-width,280px)_minmax(0,1fr)_240px]',1],
-]) {
- if(!layout.includes(after)) {
-  assert.equal(layout.split(before).length-1,count,'Inspect Dockit sidebar columns before upgrading');
-  layout=layout.replaceAll(before,after);
- }
-}
-fs.writeFileSync(layoutFile,layout);
-
-// Stable scrollbar gutter and one-line section labels, matching upstream.
-const sidebarFile=fileURLToPath(new URL('../node_modules/@dreamlake/dockit/dist/components/Sidebar.js',import.meta.url));
-let sidebar=fs.readFileSync(sidebarFile,'utf8');
-for(const [before,after] of [
- ['className: "hidden md:flex sticky overflow-y-auto flex-col"','className: "doc-sidebar hidden md:flex sticky overflow-y-auto flex-col"'],
- ['jsx("span", { children: group.label })','jsx("span", { title: group.label, children: group.label })'],
-]) {
- if(!sidebar.includes(after)) {
-  assert.equal(sidebar.split(before).length-1,1,'Inspect Dockit sidebar markup before upgrading');
-  sidebar=sidebar.replace(before,after);
- }
-}
-fs.writeFileSync(sidebarFile,sidebar);
